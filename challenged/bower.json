@@ -1,0 +1,26 @@
+{
+  "name": "challanged",
+  "version": "0.0.0",
+  "homepage": "https://github.com/parer800/challenged",
+  "authors": [
+    "Par Eriksson <parer800@student.liu.se>"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "angular": "~1.2.18",
+    "font-awesome": "~4.1.0",
+    "bootstrap": "~3.1.1"
+  }
+}

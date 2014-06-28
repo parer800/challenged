@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Challange Authentication</title>
+    <link rel='stylesheet' href='/bower_components/font-awesome/css/font-awesome.css' />
+    <link rel='stylesheet' href='/bower_components/bootstrap/dist/css/bootstrap.css' />
+  </head>
+  <body>
+  <div class="container">
+	  <div class="col-sm-6 col-sm-offset-3">
+	  	<h1><span class="fa fa-sign-in"></span> Register account</h1>
+	  	<p>Login or Register with:</p>
+
+	  	<!-- Show any message that come back with authentication, returned message from server side '/routes/auth.js'  
+	  	{{#messages}}
+	  		<div class="alert alert-danger">{{}}</div>
+	  	{{/messages}}
+
+	  	-->
+
+	  	<!-- REGISTER FORM -->
+
+	  	<form action="/signup" method="post">
+	  		<div class="form-group">
+	  			<label>Email</label>
+	  			<input type="text" class="form-control" name="email">
+	  		</div>
+	  		<div class="form-group">
+	  			<label>Password</label>
+	  			<input type="password" class="form-control" name="password">
+	  		</div>
+
+	  		<button type="submit" class="btn btn-warning btn-lg">Signup</button>
+	  	</form>
+
+	  	<hr>
+
+	  	<p>Already have an account? <a href="/login">Login</a></p>
+
+	  </div>
+  </div>
+  </body>
+</html>

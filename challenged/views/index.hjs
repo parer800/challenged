@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Challenged - train together!</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Welcome authenticated user!</h1>
+    <p>your account name is {{user}}</p>
+  </body>
+</html>
