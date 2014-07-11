@@ -1,0 +1,14 @@
+<div class="jumbotron text-center">
+	<h1>The home page for Challenged</h1>
+	<p>This is a base for home page</p>
+
+	<!-- Linking to a nested view, use denotaion e.g. '.list'. We call e.g. home.list in the home states  -->
+	<a ui-sref=".list" class="btn btn-primary">List</a>
+	<a ui-sref=".paragraph" class="btn btn-danger">Paragraph</a>
+</div>
+    <div >
+      
+        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="alert.close()">{{ alert.msg }}</alert>
+    </div>
+
+<div ui-view></div>

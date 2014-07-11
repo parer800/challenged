@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html ng-app="mainApp">
+  <head>
+    <title>Challenged - train together!</title>
+    <link rel='stylesheet' href='/bower_components/font-awesome/css/font-awesome.css' />
+    <link rel='stylesheet' href='/bower_components/bootstrap/dist/css/bootstrap.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/bower_components/ng-grid/ng-grid.css' />
+    <link rel='stylesheet' href='/stylesheets/sb-admin/sb-admin.css'/>
+    <link rel='stylesheet' href='/bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css' />
+
+
+    <script src='/bower_components/momentjs/min/moment.min.js'></script>
+	  <script src='/bower_components/jquery/dist/jquery.js'></script>
+    <script src='/bower_components/angular/angular.js'></script>
+    <script src='/bower_components/angular-ui-router/release/angular-ui-router.js'></script>
+    <script src='/bower_components/angular-ui/build/angular-ui.js'></script>
+    <script src='/bower_components/angular-bootstrap/ui-bootstrap-tpls.js'></script>
+    <script src='/bower_components/bootstrap/dist/js/bootstrap.js'></script>
+    <script src='/bower_components/ng-grid/build/ng-grid.js'></script>
+    <script src='/bower_components/bootstrap-daterangepicker/daterangepicker.js'></script>
+    <script src='/bower_components/ng-bs-daterangepicker/src/ng-bs-daterangepicker.js'></script>
+    <!-- Our angular app -->
+    <script src='/javascripts/app.js'></script>
+
+    <script src='/javascripts/sb-admin/plugins/bootstrap.min.js'></script>
+
+    <!-- services -->
+    <script src='/javascripts/services/user-services.js'></script>
+    <script src='/javascripts/services/league-services.js'></script>
+
+
+    <!--controllers-->
+    <script src='/javascripts/controllers/usersCtrl.js'></script>
+    <script src='/javascripts/controllers/sessionCtrl.js'></script>
+    <script src='/javascripts/controllers/leagueCtrl.js'></script>
+
+  </head>
+  <body>
+    <!-- NAVIGATION -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
+      
+      <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+        <a class="navbar-brand" ui-sref="#">Challenged - beta</a>
+      </div>
+    <!--  <ul class="nav navbar-nav">
+        <li><a ui-sref="home">Home</a></li>
+        <li><a ui-sref="profile">Profile</a></li>
+        <li><a ui-sref="friends">Friends</a></li>
+      </ul>-->
+
+      <!-- Logined user indicator -->
+      <ul id="settings-nav" class="nav navbar-top-links navbar-right">
+        <li><a ui-sref="home">Home</a></li>
+        <li><a ui-sref="profile">Profile</a></li>
+        <li class="dropdown">
+
+          <a style="cursor:pointer;" class="dropdown-toggle" data-toggle="dropdown"> <i class="fa fa-user"></i><% user %><span class="caret"></span>
+          <ul class="dropdown-menu pull-left">
+            <li><a ui-sref="settings"><i class="fa fa-cog"></i>Settings</a></li>
+            <li><a ui-sref="account"><i class="fa fa-lock"></i>Account</a></li>
+            <li class="divider"></li>
+            <li><a ui-sref="logout"><i class="fa fa-sign-out"></i>Logout</a></li>
+          </ul>
+          </a>
+        </li>
+      </ul>
+      <!-- Navbar top end -->
+
+       <!-- Navbar side begin -->
+      <div class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+          <ul class="nav" id="side-menu">
+              <li class="sidebar-search">
+                  <div class="input-group custom-search-form">
+                      <input type="text" class="form-control" placeholder="Search...">
+                      <span class="input-group-btn">
+                      <button class="btn btn-default" type="button">
+                          <i class="fa fa-search"></i>
+                      </button>
+                  </span>
+                  </div>
+                  <!-- /input-group -->
+              </li>
+              <li>
+                <a href="#"><i class="fa fa-users fa-fw"></i> Friends</a>
+              </li>
+              <li>
+                <a ui-sref="leagues"><i class="fa fa-table fa-fw"></i> Leagues</a>
+              </li>
+            </ul>
+          </div>
+      </div>
+    </nav>
+
+    <!-- MAIN  CONTENT -->
+    <div id="page-wrapper">
+        <div class="row">
+         <div class="col-md-12 col-sm-main">
+              <div id="main-content" ui-view></div> <!-- Managed by /javascript/app.js -->
+         </div>
+        </div>
+     </div>
+  </body>
+
+
+  <script src='/javascripts/sb-admin/plugins/metisMenu/jquery.metisMenu.js'></script>
+  <script src='/javascripts/sb-admin/sb-admin.js'></script>
+</html>

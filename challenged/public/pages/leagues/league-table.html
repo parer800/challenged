@@ -1,0 +1,23 @@
+<!-- league-table.html -->
+<!--
+<table class="table table-hover table-striped table-bordered">
+    <thead>
+        <tr>
+            <td>League</td>
+            <td>Creator</td>
+        </tr>
+    </thead>
+    <tbody>
+    
+        <tr ng-repeat="league in leagues">
+            <td>{{ league.name }}</td>
+            <td>${{ league.creator }}</td>
+        </tr>
+        
+    </tbody>
+</table>
+-->
+
+<div id="user-league-list" class="gridStyle" ng-grid="gridOptions"></div>
+<strong>this is only to show the data of selected league</strong>
+<div class="selectedItems">{{selectedLeague}}</div>

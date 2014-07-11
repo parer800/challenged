@@ -21,6 +21,7 @@ require('./config/passport')(passport); // pass our passport object for configur
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
+app.locals.delimiters = '<% %>';
 app.set('view engine', 'hjs');
 app.use(express.favicon());
 app.use(express.logger('dev'));

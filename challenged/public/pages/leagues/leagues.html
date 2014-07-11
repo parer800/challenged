@@ -1,0 +1,32 @@
+<!-- league.html -->
+
+<div class="jumbotron text-center">
+	<h1>Your Leagues </h1>
+</div>
+
+<div class="row text-center">
+	
+		<button class="btn btn-success" ng-init="isCollapsed= true" ng-click="isCollapsed = !isCollapsed" ><i class="fa fa-plus"></i> Create a new league</button>
+		
+		<div collapse="isCollapsed">
+			<hr>
+			<div class="well well-lg">
+				<div ui-view="createLeagueForm"></div>
+			</div> 
+			
+		</div>
+</div>
+
+<div class="row">
+	<hr>
+
+	<!-- COLUMN ONE NAMED VIEW -->
+	<div class="col-sm-6">
+		<div ui-view="columnOne"></div>
+	</div>
+
+	<!-- COLUMN TWO NAMED VIEW -->
+	<div class="col-sm-6">
+		<div ui-view="columnTwo"></div>
+	</div>
+</div>

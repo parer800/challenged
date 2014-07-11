@@ -1,0 +1,19 @@
+<!-- list-users.html -->
+<h2>Users</h2>
+
+<table class="table table-hover table-striped table-bordered">
+    <thead>
+        <tr>
+            <td>Name</td>
+            <td>Email</td>
+        </tr>
+    </thead>
+    <tbody>
+    
+        <tr ng-repeat="user in users track by $index">
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+        </tr>
+        
+    </tbody>
+</table>

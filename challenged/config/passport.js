@@ -3,15 +3,27 @@
 
 // load all necessary includes
 var LocalStrategy		= require('passport-local').Strategy;
-// load the user model
+var GoogleStrategy		= require('passport-google-oauth').OAuth2Strategy;
 
+//Configuration for google authentication
+var configAuth			= require('./auth');
+
+// load the user model
 var User 				= require('../model/user');
 
 
 
 
 function setProfileName(user, name){
-	user.profile.name = name;
+	//Init profile first time, otherwise the user will set it manually
+	if(user.profile.name === undefined)
+		user.profile.name = name;
+
+}
+
+function setProfileEmail(user, email){
+	if(user.profile.email === undefined)
+		user.profile.email = email;
 }
 
 
@@ -70,6 +82,9 @@ module.exports = function(passport) {
 					// set up user's local login info
 					newUser.local.email = email;
 					newUser.local.password = newUser.generateHash(password);
+					setProfileName(newUser, email);
+					setProfileEmail(newUser, email);
+
 					//newUser.local.password = password;
 					// save the user
 					console.log(newUser);
@@ -114,6 +129,69 @@ module.exports = function(passport) {
 
 			// Login Success
 			return done(null, user);
+		});
+	}));
+
+
+
+	//===============================================================
+	// GOOGLE =======================================================
+	//===============================================================
+
+	passport.use(new GoogleStrategy({
+		clientID		  : configAuth.googleAuth.clientID,
+		clientSecret	  : configAuth.googleAuth.clientSecret,
+		callbackURL		  : configAuth.googleAuth.callbackURL,
+		passReqToCallback : true	// allows to pass in the req from routes
+
+	},
+	function(req, token, refreshtoken, profile, done) {
+		// make asynchrounous so User.findOne won't fire until we have all data needed
+		process.nextTick(function() {
+
+			// check if user already logged in
+			if(!req.user) {
+
+				User.findOne({ 'google.id' : profile.id }, function(err, user) {
+					if(err)
+						return done(err);
+					if(user) {
+						//if user is found log them in
+						return done(null, user);
+					}
+					else{
+						var newUser				= User();
+
+						newUser.google.id 		= profile.id;
+						newUser.google.token 	= token;
+						newUser.google.name 	= profile.displayName;
+						newUser.google.email	= profile.emails[0].value; //Take the first email (if multiple)
+						setProfileName(newUser, profile.displayName);
+						setProfileEmail(newUser, profile.emails[0].value);
+						// save the user
+						newUser.save(function(err) {
+							if(err)
+								throw err;
+							return done(null, newUser);
+						});
+
+					}
+				});
+			} else {
+				// user already exists and is logged in, link that account to a google account
+				var user 					= req.user;
+
+				user.google.id				= profile.id;
+				user.google.token			= profile.displayName;
+				user.google.email 			= profile.emails[0].value;
+
+				//save updated user account
+				user.save(function(err) {
+					if (err)
+						throw err;
+					return done(null, user);
+				});
+			}
 		});
 	}));
 };

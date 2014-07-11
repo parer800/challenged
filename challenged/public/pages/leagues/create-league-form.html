@@ -1,0 +1,37 @@
+<!-- create-league-form.html -->
+
+<h4>Create your league</h4>
+<form name="leagueForm" ng-submit="processLeague(leagueForm.$valid)" novalidate><!-- novalidate prevents HTML5 validation since we will be validating ourselves -->
+	<div class="form-group">
+		<div class="row">
+			<div class="col-md-6" ng-class="{ 'has-error' : leagueForm.name.$invalid && !leagueForm.name.$pristine }">
+				<label>Leaue name</label>
+				<input type="text" name="name" class="form-control" ng-model="leagueData.name" required>
+				<p ng-show="leagueForm.name.$invalid && !leagueForm.name.$pristine" class="help-block">Name of league is required</p>
+			</div>
+		</div>
+		
+
+		 
+		<div class="row">
+			<div class="col-md-6">
+				<label>Duration <i class="glyphicon glyphicon-calendar"></i></label>
+					<!-- <my-date-picker dp="start"></my-date-picker> -->
+
+					<input type="daterange" ng-model="date1" class="form-control"/>
+					
+					<div class="btn-form">
+						<button type="button" class="btn btn-default"><i class="fa fa-folder-open-o"></i> Import existing schema</button>
+							<button  type="button" class="btn btn-default"><i class="fa fa-plus"></i> Add exercise schema</button>
+					<strong>--TODO--</strong>
+					</div> 
+
+			</div>
+
+		</div>
+
+		<button class="btn btn-success pull-left">Create</button>
+	</div>
+</form>
+
+

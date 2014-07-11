@@ -1,0 +1,14 @@
+<!-- specific-league-column.html -->
+<div id="selected-league-top">
+	<h1>{{selectedLeague[0].name}}</h1>
+	<h3>created by {{selectedLeague[0].creator.profile.name}}</h3>
+    <div id="league-status" ng-show="selectedLeague[0].isPrivate">
+    <div class="row">
+        <i class="fa fa-lock"></i>
+        <div id="public-description"><p>Private</p></div>
+    </div>
+    </div>
+    
+<div>
+
+

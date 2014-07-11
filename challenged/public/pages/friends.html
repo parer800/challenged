@@ -1,0 +1,26 @@
+<!-- friends.html -->
+<div ng-controller="friendController">
+Friends
+
+
+Filter: <input ng-model = "nameFilter" />
+
+
+<table class="table table-hover table-striped table-bordered">
+    <thead>
+        <tr>
+            <td>Friends</td>
+        </tr>
+    </thead>
+    <tbody>
+    
+        <tr ng-repeat="user in users | filter: nameFilter">
+            <td>{{user.name}}</td>
+        </tr>
+        
+    </tbody>
+</table>
+
+
+
+</div>

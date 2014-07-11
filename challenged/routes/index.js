@@ -1,6 +1,8 @@
 /*
  * GET home page.
  */
+
+var User 	   = require('../model/user');
 module.exports = function(app,passport){
 
 
@@ -9,19 +11,27 @@ module.exports = function(app,passport){
 		if(req.isAuthenticated())
 			res.redirect('/home');
 		else
-			res.render('login');
+			res.render('index');
 
 	});
 
 	app.get('/home', isLoggedIn, function(req,res) {
 		console.log(req.user.local.email);
-		res.render('index.hjs', {"user": req.user.local.email});
+		res.render('SPA-index.hjs', {"user": req.user.profile.name});
 	});
 
 
 	// Authentication route ===========================
 	require('./auth')(app, passport);
 
+	// Authentication GOOGLE ==========================
+	require('./google')(app, passport, isLoggedIn);
+
+	// Authentication GOOGLE ==========================
+	require('./google')(app, passport, isLoggedIn);
+
+	// API
+	require('./api')(app,isLoggedIn);
 
 };
 

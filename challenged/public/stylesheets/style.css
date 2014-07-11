@@ -6,3 +6,25 @@ body {
 a {
   color: #00B7FF;
 }
+
+
+
+#settings-nav {
+}
+#settings-nav i {
+	margin-right: 5px;
+	min-width: 12px;
+}
+
+#settings-nav .dropdown-menu{
+	min-width: 100%;
+}
+
+#main-content{
+	/*width: 100%;
+	float: right;*/
+
+}
+#user-league-list{
+	min-height: 350px;
+}

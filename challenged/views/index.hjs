@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Challenged - train together!</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>{{ title }}</title>
+    <link rel='stylesheet' href='/bower_components/font-awesome/css/font-awesome.css' />
+    <link rel='stylesheet' href='/bower_components/bootstrap/dist/css/bootstrap.css' />
   </head>
   <body>
-    <h1>Welcome authenticated user!</h1>
-    <p>your account name is {{user}}</p>
+  <div class="container">
+	  <div class="jumbotron text-center">
+	  	<h1><span class="fa fa-lock"></span> Challenged Authentication</h1>
+	  	<p>Login or Register with:</p>
+	  	<a href="/login" class="btn btn-default"><span class="fa fa-user"></span>Local Login</a>
+	  	<a href="/signup" class="btn btn-default"><span class="fa fa-user"></span>Local Signup</a>
+      <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google-plus"></span> Google </a>
+	  </div>
+  </div>
   </body>
 </html>
