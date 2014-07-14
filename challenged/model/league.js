@@ -1,5 +1,6 @@
 // app/model/leagues.js
 var User 	   = require('./user');
+var Exercise   = require('./exercise');
 var mongoose = require('mongoose');
 
 
@@ -9,6 +10,10 @@ var leagueSchema = mongoose.Schema({
 	creator			: {
 		type		: mongoose.Schema.Types.ObjectId,
 		ref			: 'User'
+	},
+	exerciseSchema : {
+		type		: mongoose.Schema.Types.ObjectId,
+		ref			: 'Exercise'
 	}
 });
 

@@ -30,3 +30,20 @@ serviceApp.factory('selectLeagueService', function () {
 	};
 	return selectLeagueService;
 });
+
+serviceApp.factory('leagueFormService', function () {
+	
+	var leagueFormService = {
+		sharedObject: {
+			exerciseSchedule : null
+		},
+		getExercises: function() {
+				console.log("getExercises");
+				return leagueFormService.sharedObject.exerciseSchedule;
+		},
+		updateObject: function (exerciseSchedule_) {
+				leagueFormService.sharedObject.exerciseSchedule = exerciseSchedule_;
+		}
+	};
+	return leagueFormService;
+});

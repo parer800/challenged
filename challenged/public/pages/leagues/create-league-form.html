@@ -1,5 +1,72 @@
 <!-- create-league-form.html -->
 
+<!-- Content of the exercise schema creation -->
+ <script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Create new exercise schema!</h3>
+    </div>
+    
+    <div class="modal-body">
+        <form name="tableform" onaftersave="saveTable()" oncancel="cancel()"> 
+        	<input type="text" value="name" class="form-control" ng-model="schedule.schemaName">
+        	<table class="table table-bordered table-hover table-condensed">
+    			<tr style="font-weight: bold">
+    				<td style="width:35%">Name of exercise</td> <!-- Column for name -->
+    				<td style="width:20%">Type of exercise</td> <!-- Column for type -->
+    				<td style="width:20%">Subtype of exercise</td> <!-- Column for subtype -->
+    				<td style="max-width:20%">Amount of exercise</td> <!-- Column for subtype -->
+    			</tr>
+    			<tr>
+    				<td>
+    					<!-- SCHEDULE NAME -->
+    					<input type="text" name="name" value="name" class="form-control" ng-model="schedule.name">
+    				</td>
+    				<td>
+    					<!-- SCHEDULE TYPE -->
+    					<select ng-model="schedule.type" class="form-control" ng-options="t.type for t in exercises">
+    					<option value="">-- Select type --</option>
+    					</select>
+    				<td>
+    					<!-- SCHEDULE SUBTYPE-->
+    					<select ng-model="schedule.subtype" class="form-control" ng-options="t.subtype for t in schedule.type.subtypes">
+    					<option value="">-- Select task --</option>
+    					</select>
+    				</td>
+    				<td>
+    					<!-- SCHEDULE AMOUNT OF SUBTYPE -->
+    					<!-- <select ng-model="schedule.amount" ng-options="t.subtype for t in schedule.type.subtypes">
+    					</select> -->
+    					<div class="form-group input-group" ng-show="schedule.subtype.unit=='number'"> 
+    						<input ng-model="schedule.amount" class="form-control" ng-change="changed()">
+    						<span class="input-group-addon">km</span>
+    					</div>
+    					<div class="form-group input-group" ng-show="schedule.subtype.unit=='time'">
+							<input type="time" ng-model="schedule.amount" class="form-control" ng-change="changed()" ui-mask="'99:99'">
+							<span class="input-group-addon">hh:mm</span>
+    					</div>
+
+    				</td>	    				
+
+    			</tr>
+
+			</table>
+		    <!-- buttons -->
+
+		     <div class="btn-form">
+					<button type="button" ng-click="addExercise(type)" class="btn btn-default pull-right">add row</button>
+		     </div>
+
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">Save schema</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+    <div id="user-league-list" class="gridStyle" ng-grid="gridOptions"></div>
+</script>
+
+
+
 <h4>Create your league</h4>
 <form name="leagueForm" ng-submit="processLeague(leagueForm.$valid)" novalidate><!-- novalidate prevents HTML5 validation since we will be validating ourselves -->
 	<div class="form-group">
@@ -21,9 +88,11 @@
 					<input type="daterange" ng-model="date1" class="form-control"/>
 					
 					<div class="btn-form">
-						<button type="button" class="btn btn-default"><i class="fa fa-folder-open-o"></i> Import existing schema</button>
-							<button  type="button" class="btn btn-default"><i class="fa fa-plus"></i> Add exercise schema</button>
 					<strong>--TODO--</strong>
+						<button type="button" class="btn btn-default"><i class="fa fa-folder-open-o"></i> Import existing schema</button>
+
+							<button  ng-controller ="taskController" type="button" class="btn btn-default" ng-click="open('lg')"><i class="fa fa-plus"></i> Add exercise schema</button>
+
 					</div> 
 
 			</div>

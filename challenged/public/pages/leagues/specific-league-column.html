@@ -11,4 +11,24 @@
     
 <div>
 
+<table id="league_overview" class="table table-hover table-striped table-bordered">
+    <thead>
+        <tr>
+            <td>Exercise</td>
+            <td>type</td>
+            <td>subtype</td>
+            <td>amount</td>
+        </tr>
+    </thead>
+    <tbody>
+    
+        <tr ng-repeat="task in selectedLeague[0].exerciseSchema.content">
+            <td>{{ task.name }}</td>
+            <td>{{ task.type }}</td>
+            <td>{{ task.subtype }}</td>
+            <td>{{ task.amount }}</td>
+        </tr>
+        
+    </tbody>
+</table>
 
