@@ -68,39 +68,52 @@
 
 
 <h4>Create your league</h4>
-<form name="leagueForm" ng-submit="processLeague(leagueForm.$valid)" novalidate><!-- novalidate prevents HTML5 validation since we will be validating ourselves -->
-	<div class="form-group">
-		<div class="row">
-			<div class="col-md-6" ng-class="{ 'has-error' : leagueForm.name.$invalid && !leagueForm.name.$pristine }">
-				<label>Leaue name</label>
-				<input type="text" name="name" class="form-control" ng-model="leagueData.name" required>
-				<p ng-show="leagueForm.name.$invalid && !leagueForm.name.$pristine" class="help-block">Name of league is required</p>
-			</div>
-		</div>
-		
+<div class="row">
+    <div class="col-md-6" id="create-league-form">
+        <form name="leagueForm" ng-submit="processLeague(leagueForm.$valid)" novalidate><!-- novalidate prevents HTML5 validation since we will be validating ourselves -->
+        	<div class="form-group">
+        		<div class="row">
+        			<div class="col-md-12" ng-class="{ 'has-error' : leagueForm.name.$invalid && !leagueForm.name.$pristine }">
+        				<label>Leaue name</label>
+        				<input type="text" name="name" class="form-control" ng-model="leagueData.name" required>
+        				<p ng-show="leagueForm.name.$invalid && !leagueForm.name.$pristine" class="help-block">Name of league is required</p>
+        			</div>
+        		</div>
+        		
 
-		 
-		<div class="row">
-			<div class="col-md-6">
-				<label>Duration <i class="glyphicon glyphicon-calendar"></i></label>
-					<!-- <my-date-picker dp="start"></my-date-picker> -->
+        		 
+        		<div class="row">
+        			<div class="col-md-12">
+        				<label>Duration <i class="glyphicon glyphicon-calendar"></i></label>
+        					<!-- <my-date-picker dp="start"></my-date-picker> -->
 
-					<input type="daterange" ng-model="date1" class="form-control"/>
-					
-					<div class="btn-form">
-					<strong>--TODO--</strong>
-						<button type="button" class="btn btn-default"><i class="fa fa-folder-open-o"></i> Import existing schema</button>
+        					<input type="daterange" ng-model="date1" class="form-control"/>
+        					
+        					<div class="btn-form">
+        					<strong>--TODO--</strong>
+        						<button type="button" class="btn btn-default"><i class="fa fa-folder-open-o"></i> Import existing schema</button>
 
-							<button  ng-controller ="taskController" type="button" class="btn btn-default" ng-click="open('lg')"><i class="fa fa-plus"></i> Add exercise schema</button>
+        							<button  ng-controller ="taskController" type="button" class="btn btn-default" ng-click="open('lg')"><i class="fa fa-plus"></i> Add exercise schema</button>
 
-					</div> 
+        					</div> 
 
-			</div>
+        			</div>
 
-		</div>
+        		</div>
 
-		<button class="btn btn-success pull-left">Create</button>
-	</div>
-</form>
+        		<button class="btn btn-success pull-left">Create</button>
+        	</div>
+        </form>
+    </div>
+    <div class="col-md-6" id="schema-accordion">
+        <accordion>
+            <accordion-group heading="{{attachedSchema.name}}" is-open="attachedSchema.open">
+              {{attachedSchema.content}}
+            </accordion-group>    
+        </accordion>
+    </div>
+</div>
+
+<!--<div schemas-collapse collapse-data="collapseData" collapse-panel-id="collapse-panel" collapse-panel-body-id="collapse-panel-body"></div>-->
 
 

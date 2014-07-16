@@ -81,7 +81,7 @@ module.exports = function(app, isLoggedIn) {
 	app.post('/api/createSchema', isLoggedIn, function (req, res) {
 		//console.log(req.body);
 		console.log(req.body);
-		var exercise = new Exercise({name: req.body.name, creator: req.user});
+		
 		//var exercise = new Exercise;
 
 		if(typeof req.body.content == 'undefined'){
@@ -89,38 +89,64 @@ module.exports = function(app, isLoggedIn) {
 			return;
 		}
 
-		req.body.content.forEach(function (item) {
-			exercise.content.push({name: item.name, type: item.type, subtype: item.subtype, amount: item.amount});
-		});
 
+		var exercise = null;
+		if(typeof req.body.schemaId == 'undefined'){
+			console.log("NEW CREATED SCHEMA CONNECTION");
+			exercise = new Exercise({name: req.body.name, creator: req.user});
+			req.body.content.forEach(function (item) {
+				exercise.content.push({name: item.name, type: item.type, subtype: item.subtype, amount: item.amount});
+			});
 
-		var subdoc = exercise.content[0];	
+			exercise.save(function(err, result) {
+				if (err) 
+					res.send({'error':'An error has occurred'});
+				else{
+					exercise.addConnectionToUser(exercise._id, req, function() {
+						console.log("updated");
+						User.findByIdAndUpdate(req.user._id, 
+							{$push: {ExerciseSchema : exercise._id}},
+							function(err, obj){
+								if(err)
+									console.log(err);
+								if(!obj)
+									console.log("cannot save");
+								
 
-		exercise.save(function(err, result) {
-			if (err) 
-				res.send({'error':'An error has occurred'});
-			else{
-				exercise.addConnectionToUser(exercise._id, req, function() {
-					console.log("updated");
-					User.findByIdAndUpdate(req.user._id, 
-						{$push: {ExerciseSchema : exercise._id}},
-						function(err, obj){
-							if(err)
-								console.log(err);
-							if(!obj)
-								console.log("cannot save");
-							
+								//result message
+								res.send({object : result});
+							}					  
+	     				);
+					});
+				}
+			});	
+		}
+		else{
+			console.log("UPDATING EXERCISE SCHEMA WITH ID: " + req.body.schemaId);
+			Exercise.findOne({_id: req.body.schemaId}, function (err, exercise_) {
+				if(err){
+					status_message = "An error occured with exercise schema";
+					console.log(err);
+					throw err;
+				}
+				exercise = exercise_;
+				for(var i = exercise_.content.length; i < req.body.content.length; i++){
+					var item = req.body.content[i];
+					console.log("updating position i= " + i + " With item :");
+					console.log(item);
+					exercise.content.push({name: item.name, type: item.type, subtype: item.subtype, amount: item.amount});
+				}
 
-							//result message
-							res.send({object : result});
-						}					  
-     				);
+				exercise.save(function(err, result) {
+					if (err) 
+						res.send({'error':'An error has occurred'});
+					else{
+						res.send({object : result});
+					}
 				});
-				
-				
 
-			}
-		});			
+			});
+		}
 
 	});
 

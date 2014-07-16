@@ -28,3 +28,7 @@ a {
 #user-league-list{
 	min-height: 350px;
 }
+
+#schema-accordion .a{
+	cursor: pointer;
+}

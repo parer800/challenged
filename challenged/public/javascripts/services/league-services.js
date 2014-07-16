@@ -35,7 +35,8 @@ serviceApp.factory('leagueFormService', function () {
 	
 	var leagueFormService = {
 		sharedObject: {
-			exerciseSchedule : null
+			exerciseSchedule : null,
+			schedules : []
 		},
 		getExercises: function() {
 				console.log("getExercises");
@@ -43,6 +44,7 @@ serviceApp.factory('leagueFormService', function () {
 		},
 		updateObject: function (exerciseSchedule_) {
 				leagueFormService.sharedObject.exerciseSchedule = exerciseSchedule_;
+				leagueFormService.sharedObject.schedules.push(exerciseSchedule_);
 		}
 	};
 	return leagueFormService;

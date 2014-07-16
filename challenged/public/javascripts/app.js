@@ -97,4 +97,5 @@ routerApp.config(function($stateProvider, $urlRouterProvider, $locationProvider)
 		});
 })
 	var serviceApp = angular.module('serviceApp', []); // keep services connected to this object
-	var mainApp = angular.module('mainApp', ['routerApp', 'serviceApp']); // tha main app connected on the outer html element
+	var directiveApp = angular.module('directiveApp', []) // keep dircetives connected to this object
+	var mainApp = angular.module('mainApp', ['routerApp', 'serviceApp', 'directiveApp']); // tha main app connected on the outer html element

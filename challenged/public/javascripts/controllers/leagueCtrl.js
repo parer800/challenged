@@ -35,6 +35,21 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 	$scope.leagueData = {};
 	$scope.date1;
 	$scope.schemaIsAttached;
+	
+
+	$scope.attachedSchema = {};
+	$scope.attachedSchema.open = false;
+	$scope.service = leagueFormService;
+	$scope.$watch('service.sharedObject.exerciseSchedule', function (newValue) {
+		console.log(newValue);
+		if(newValue != null){
+        	$scope.attachedSchema.name = newValue.name;
+        	$scope.attachedSchema.content = newValue.content;
+		}
+
+    });
+
+
 
 	$scope.processLeague = function(isValid) {
 		//console.log($scope.date1);
@@ -283,7 +298,10 @@ var ModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $http, exerci
 
 	$scope.ok = function () {
 		$scope.newSchema.name = $scope.schedule.schemaName;
-		
+		console.log("TRYING TO SAVE");
+		console.log($scope.newSchema.schemaId);
+		console.log($scope.newSchema);
+		console.log(leagueFormService.sharedObject.exerciseSchedule);
 		//save schema on server
 		$http({
 			method	: 'POST',
