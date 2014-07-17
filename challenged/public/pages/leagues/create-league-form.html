@@ -105,10 +105,30 @@
         	</div>
         </form>
     </div>
-    <div class="col-md-6" id="schema-accordion">
+    <div ng-show="attachedSchema.content" class="col-md-6" id="schema-accordion">
         <accordion>
             <accordion-group heading="{{attachedSchema.name}}" is-open="attachedSchema.open">
-              {{attachedSchema.content}}
+              <!--{{attachedSchema.content}}-->
+                <table id="league_overview" class="table table-hover table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <td>Exercise</td>
+                            <td>Type</td>
+                            <td>Subtype</td>
+                            <td>Amount</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    
+                        <tr ng-repeat="task in attachedSchema.content">
+                            <td>{{ task.name }}</td>
+                            <td>{{ task.type }}</td>
+                            <td>{{ task.subtype }}</td>
+                            <td>{{ task.amount }}</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
             </accordion-group>    
         </accordion>
     </div>
