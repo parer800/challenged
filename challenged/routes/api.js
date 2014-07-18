@@ -66,13 +66,13 @@ module.exports = function(app, isLoggedIn) {
 // =============================================================
 	
 	app.get('/api/exerciseSchemas', isLoggedIn, function (req, res) {
+		console.log("INSIDE EXERCISE SCHEMAS");
 		User.findOne({_id: req._passport.session.user})
+		.select('_id profile ExerciseSchema')
 		.populate('ExerciseSchema')
 		.exec(function (err, result) {
 			if (err) return handleError(err);
-
-			console.log(result);
-			res.send(result.ExerciseSchema);
+			res.send(result);
 			
 		});
 

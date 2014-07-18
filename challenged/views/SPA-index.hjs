@@ -28,6 +28,7 @@
     <!-- services -->
     <script src='/javascripts/services/user-services.js'></script>
     <script src='/javascripts/services/league-services.js'></script>
+    <script src='/javascripts/services/exercise-services.js'></script>
 
     <!-- directives -->
     <script src='/javascripts/directives/customDirectives.js'></script>

@@ -145,16 +145,12 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 
 
 
-routerApp.controller('importSchemaController', function ($scope, $modal, getExerciseService) {
-	getExerciseService.getExercises().then(function (promise) {
-		$scope.exerciseSchema =promise;
-		console.log($scope.exerciseSchema);
-	});
-
-})
 
 
 
+/*==================================================================================
+============================== CREATE NEW SCHEMA ====================================
+====================================================================================*/
 routerApp.controller('taskController', function ($scope, $modal, $log) {
 	$scope.tasks = ['strengh', 'running', 'other'];
 	
@@ -196,7 +192,7 @@ routerApp.controller('taskController', function ($scope, $modal, $log) {
 		{value: 3, text: 'weight'}
 	];
 
-	$scope.newSchema = {name: "hardcodedName", content: []};
+	$scope.newSchema = {name: "Name of exercise schema", content: []};
 	$scope.gridOptions = { data: 'newSchema.content' };
 
 
@@ -205,8 +201,8 @@ routerApp.controller('taskController', function ($scope, $modal, $log) {
 	$scope.open = function (size) {
 
 		var modalInstance = $modal.open({
-			templateUrl : 'myModalContent.html',
-			controller  : ModalInstanceCtrl,
+			templateUrl : 'createSchemaModalContent.html',
+			controller  : CreateSchemaModalInstanceCtrl,
 			size 	    : size,
 			resolve     : {
 				exercises   : function () {
@@ -237,8 +233,8 @@ routerApp.controller('taskController', function ($scope, $modal, $log) {
 
 });
 
-
-var ModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $http, exercises, statuses, newSchema, subtypes, leagueFormService) {
+//modal instance for create schema
+var CreateSchemaModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $http, exercises, statuses, newSchema, subtypes, leagueFormService) {
 	$scope.statuses = statuses;
 	$scope.exercises = exercises;
 	$scope.subtypes = subtypes;
@@ -331,7 +327,69 @@ var ModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $http, exerci
 		$modalInstance.dismiss('cancel');
 	};
 };
+/*==================================================================================
+============================== /////////////////////// =============================
+====================================================================================*/
 
+
+
+/*==================================================================================
+============================== IMPORT SCHEMA =======================================
+====================================================================================*/
+routerApp.controller('importSchemaController', function ($scope, $modal, $log, getExerciseService) {
+	$scope.exerciseSchemas = null;
+
+	getExerciseService.getExercises().then(function (promise) {
+		$scope.exerciseSchemas = promise.data.ExerciseSchema;
+		$scope.isOpen = Array.apply(0, Array($scope.exerciseSchemas.length)).map(Boolean).map(Number); // init an array of booleans, used by accordion in gui
+		
+		$scope.exerciseSchemas.forEach(function(schema) {
+		    console.log(schema);
+		    schema.open = false;
+		});
+
+
+		$scope.$$phase || $scope.$apply();
+
+
+
+		console.log("loading user connected schemas");
+		console.log($scope.exerciseSchemas);
+	});
+
+
+	$scope.open = function (size) {
+
+		var modalInstance = $modal.open({
+			templateUrl : 'importSchemaModalContent.html',
+			controller  : ImportSchemaModalInstanceCtrl,
+			size 	    : size,
+			resolve     : {
+				exerciseSchemas   : function () {
+					return $scope.exerciseSchemas;
+				}
+			}
+		});
+		modalInstance.result.then(function (selectedItem) {
+			$scope.selected = selectedItem;
+		}, function () {
+			$log.info('Modal dismissed at: ' + new Date());
+		});
+
+	};
+});
+
+//modal instance for import schema
+var ImportSchemaModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $http, exerciseSchemas)
+{
+	$scope.exerciseSchemas = exerciseSchemas; // this is used in the importSchemaModalContent
+	$scope.ok = function () {
+		$modalInstance.close();
+	};
+	$scope.cancel = function () {
+		$modalInstance.dismiss('cancel');
+	};
+}
 
 
 
@@ -353,67 +411,5 @@ routerApp.controller('leagueController', function ($scope, $stateParams, $http, 
 
 	$scope.leagueName = $stateParams.specificLeague;
 	
-
-});
-
-routerApp.directive('mypopover', function ($compile,$templateCache) {
-return {
-    restrict: "A",
-    link: function (scope, element, attrs) {
-
-
-        var popOverContent;
-        popOverContent = $templateCache.get("templateId.html");     
-        
-        popOverContent = $compile("<div>" + popOverContent+"</div>")(scope);
-        scope.confirmTask=function(){
-        	console.log("clicking");
-        	console.log(scope.task);
-        }
-        var options = {
-            content: popOverContent,
-            placement: "right",
-            html: true,
-            date: scope.date
-        };
-        $(element).popover(options);
-
-	 scope.today = function() {
-	    scope.dt = new Date();
-	  };
-	 // scope.today();
-
-	  scope.clear = function () {
-	    scope.dt = null;
-	  };
-
-	  // Disable weekend selection
-	  scope.disabled = function(date, mode) {
-	    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-	  };
-
-	  scope.toggleMin = function() {
-	    scope.minDate = scope.minDate ? null : new Date();
-	  };
-	  scope.toggleMin();
-
-	  scope.open = function($event) {
-	  	console.log(scope.task);
-	    $event.preventDefault();
-	    $event.stopPropagation();
-
-	    scope.opened = true;
-	  };
-
-	  scope.dateOptions = {
-	    formatYear: 'yy',
-	    startingDay: 1
-	  };
-
-	  scope.initDate = new Date('2016-15-20');
-	  scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-	  scope.format = scope.formats[0];
-    }
-};
 
 });

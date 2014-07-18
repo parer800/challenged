@@ -3,6 +3,7 @@
 //Load necessary stuff
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
+var Exercise = require('./exercise');
 
 
 // define user model schema
@@ -22,7 +23,11 @@ var userSchema = mongoose.Schema({
 	profile			: {
 		name 		: String,
 		email		: String
-	}
+	},
+	ExerciseSchema	: [{
+		type	: mongoose.Schema.Types.ObjectId,
+		ref		: 'Exercise'
+	}]	
 });
 
 
