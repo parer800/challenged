@@ -7,7 +7,9 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link rel='stylesheet' href='/bower_components/ng-grid/ng-grid.css' />
     <link rel='stylesheet' href='/stylesheets/sb-admin/sb-admin.css'/>
+    <link rel='stylesheet' href='/stylesheets/sb-admin/plugins/timeline/timeline.css'/>
     <link rel='stylesheet' href='/bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css' />
+    <link rel="stylesheet" href="/bower_components/angular-bootstrap-datetimepicker/src/css/datetimepicker.css"/>
 
 
     <script src='/bower_components/momentjs/min/moment.min.js'></script>
@@ -20,6 +22,7 @@
     <script src='/bower_components/ng-grid/build/ng-grid.js'></script>
     <script src='/bower_components/bootstrap-daterangepicker/daterangepicker.js'></script>
     <script src='/bower_components/ng-bs-daterangepicker/src/ng-bs-daterangepicker.js'></script>
+    <script type="text/javascript" src="/bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
     <!-- Our angular app -->
     <script src='/javascripts/app.js'></script>
 
@@ -32,7 +35,7 @@
 
     <!-- directives -->
     <script src='/javascripts/directives/customDirectives.js'></script>
-
+    <script src='/javascripts/directives/leagueDirective.js'></script> 
 
     <!--controllers-->
     <script src='/javascripts/controllers/usersCtrl.js'></script>

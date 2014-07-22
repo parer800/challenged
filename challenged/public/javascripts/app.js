@@ -1,5 +1,5 @@
 //app.js
-var routerApp = angular.module('routerApp', ['ui.router', 'ui.bootstrap', 'ngGrid', 'ngBootstrap']);
+var routerApp = angular.module('routerApp', ['ui.router', 'ui.bootstrap', 'ngGrid', 'ngBootstrap', 'ui.bootstrap.datetimepicker']);
 
 routerApp.config(function($stateProvider, $urlRouterProvider, $locationProvider){
 	$urlRouterProvider.otherwise('/home');
