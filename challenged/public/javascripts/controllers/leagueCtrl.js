@@ -23,7 +23,6 @@ routerApp.controller('listLeaguesController', function ($scope, listLeaguesServi
 		data: 'selectedLeague[0].exerciseSchema.content'
 	}
 
-	console.log(selectLeagueService.sharedObject.selectedLeague);
 	$scope.updateLeagueList = function () {
 		$scope.updateData();
 	}
@@ -42,7 +41,6 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 	$scope.attachedSchema.schemas = [];
 	$scope.service = leagueFormService;
 	$scope.$watch('service.sharedObject.schedules', function (newValue) {
-		console.log(newValue);
 		if(newValue != null){
         	/*$scope.attachedSchema.name = newValue.name;
         	$scope.attachedSchema.content = newValue.content;*/
@@ -61,8 +59,8 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 
 
 			//Check whether an exercise schema has been added
-			console.log(leagueFormService.getExercises());
-			if(leagueFormService.getExercises() == null){
+			console.log(leagueFormService.getScheduleIds());
+			if(leagueFormService.getScheduleIds() == 0){
 				$scope.schemaIsAttached = false;
 			}
 			else{
@@ -70,11 +68,6 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 				//Bind exerciseSchema to leagueData
 				$scope.leagueData.exerciseSchemaId = leagueFormService.getScheduleIds();
 				$scope.leagueData.timeSpan = [$scope.date1.startDate.toJSON(), $scope.date1.endDate.toJSON()];
-				console.log($scope.date1);
-				console.log($scope.leagueData);
-				console.log("league name -> " + $scope.leagueData.name);
-
-
 
 				//$scope.leagueData.name is set through create-league-form.html
 
@@ -86,9 +79,7 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 				})
 				.success(function(data) {
 					$scope.$$phase || $scope.$apply();
-					
-					console.log("leagueFormService.getExercises()");
-					console.log(leagueFormService.getExercises());
+
 					// Ugly temporary solution, a better way with separate controllers is to share a service
 					angular.element(document.getElementById('user-league-list')).scope().updateLeagueList();
 					/*if(!data.success) {
@@ -345,7 +336,6 @@ routerApp.controller('importSchemaController', function ($scope, $modal, $log, g
 		$scope.exerciseSchemas = promise.data.ExerciseSchema;
 		
 		$scope.exerciseSchemas.forEach(function(schema) {
-		    console.log(schema);
 		    schema.open = false;
 		    schema.checked = false;
 		});
@@ -353,10 +343,6 @@ routerApp.controller('importSchemaController', function ($scope, $modal, $log, g
 
 		$scope.$$phase || $scope.$apply();
 
-
-
-		console.log("loading user connected schemas");
-		console.log($scope.exerciseSchemas);
 	});
 
 

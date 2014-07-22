@@ -4,9 +4,7 @@ serviceApp.factory('listLeaguesService', function($http) {
 	return {
 		getLeagues: function() {
 			var promise = $http.get('/api/leagues')
-				.success(function (result) {
-					console.log(result)
-					
+				.success(function (result) {					
 					return result;
 				})
 				.error(function (err) {
@@ -39,7 +37,6 @@ serviceApp.factory('leagueFormService', function () {
 			schedules : {}
 		},
 		getExercises: function() {
-				console.log("getExercises");
 				return leagueFormService.sharedObject.exerciseSchedule;
 		},
 		updateObject: function (exerciseSchedule_) {
@@ -49,7 +46,6 @@ serviceApp.factory('leagueFormService', function () {
 		},
 		importSchedule: function (exerciseSchedule_) {
 			leagueFormService.sharedObject.schedules[exerciseSchedule_._id] = exerciseSchedule_;
-			console.log(leagueFormService.sharedObject.schedules);	
 		},
 		excludeImportedSchedule: function (exerciseSchedule_){
 			delete leagueFormService.sharedObject.schedules[exerciseSchedule_._id];
@@ -59,8 +55,6 @@ serviceApp.factory('leagueFormService', function () {
 			for (id in leagueFormService.sharedObject.schedules)
 				ids.push(id);
 
-			console.log("getScheduleIds");
-			console.log(ids);
 			return ids;
 		}
 	};
