@@ -87,6 +87,12 @@ routerApp.config(function($stateProvider, $urlRouterProvider, $locationProvider)
 				
 			}
 		})
+		.state('league', {
+			url: '/?specificLeague&id',
+			templateUrl: '../pages/leagues/league.html',
+			controller : 'leagueController'
+			
+		})
 		//============================================================
 		// FRIENDS ===================================================
 		//============================================================

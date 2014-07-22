@@ -21,13 +21,13 @@
         </tr>
     </thead>
     <tbody ng-repeat="schema in selectedLeague[0].exerciseSchema track by $index" id="{{schema.name+'-'+$index}}"> <!-- Can result in multiple <tbody> in the <table>, that's not a problem however.. -->
-            <tr ng-repeat="task in schema.content">
-                <td>{{ task.name }}</td>
-                <td>{{ task.type }}</td>
-                <td>{{ task.subtype }}</td>
-                <td>{{ task.amount }}</td>
-            </tr>
-
+        <tr ng-repeat="task in schema.content">
+            <td>{{ task.name }}</td>
+            <td>{{ task.type }}</td>
+            <td>{{ task.subtype }}</td>
+            <td>{{ task.amount }}</td>
+        </tr>
     </tbody>
 </table>
 
+<a ui-sref="league({specificLeague : selectedLeague[0].name, id : selectedLeague[0]._id})">go to league -></a>
