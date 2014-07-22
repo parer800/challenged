@@ -76,7 +76,12 @@
     <div class="modal-body">        
         <div ng-show="exerciseSchemas" ng-repeat="schema in exerciseSchemas" class="row" id="schema-accordion">
             <accordion>
-                <accordion-group heading="{{schema.name}}" is-open="schema.open">
+                <accordion-group is-open="schema.open">
+                    <accordion-heading>
+                      <input type="checkbox" ng-model="schema.checked" ng-click="checkboxClick(schema, $event)" />
+                      {{schema.name}}
+                    </accordion-heading>
+
                     <table id="league_overview" class="table table-hover table-striped table-bordered">
                         <thead>
                             <tr>
@@ -131,7 +136,6 @@
         					<input type="daterange" ng-model="date1" class="form-control"/>
         					
         					<div class="btn-form">
-        					<strong>--TODO--</strong>
         						<button ng-controller="importSchemaController" type="button" class="btn btn-default" ng-click="open('lg')"><i class="fa fa-folder-open-o"></i> Import existing schema</button>
 
         							<button  ng-controller ="taskController" type="button" class="btn btn-default" ng-click="open('lg')"><i class="fa fa-plus"></i> Add exercise schema</button>
@@ -146,9 +150,9 @@
         	</div>
         </form>
     </div>
-    <div ng-show="attachedSchema.content" class="col-md-6" id="schema-accordion">
+    <div ng-repeat="schema in attachedSchema track by $index" class="col-md-6" id="schema-accordion">
         <accordion>
-            <accordion-group heading="{{attachedSchema.name}}" is-open="attachedSchema.open">
+            <accordion-group heading="{{schema.name}}" is-open="schema.open">
               <!--{{attachedSchema.content}}-->
                 <table id="league_overview" class="table table-hover table-striped table-bordered">
                     <thead>
@@ -161,7 +165,7 @@
                     </thead>
                     <tbody>
                     
-                        <tr ng-repeat="task in attachedSchema.content">
+                        <tr ng-repeat="task in schema.content">
                             <td>{{ task.name }}</td>
                             <td>{{ task.type }}</td>
                             <td>{{ task.subtype }}</td>

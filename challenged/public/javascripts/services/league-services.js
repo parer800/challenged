@@ -36,15 +36,32 @@ serviceApp.factory('leagueFormService', function () {
 	var leagueFormService = {
 		sharedObject: {
 			exerciseSchedule : null,
-			schedules : []
+			schedules : {}
 		},
 		getExercises: function() {
 				console.log("getExercises");
 				return leagueFormService.sharedObject.exerciseSchedule;
 		},
 		updateObject: function (exerciseSchedule_) {
+
 				leagueFormService.sharedObject.exerciseSchedule = exerciseSchedule_;
-				leagueFormService.sharedObject.schedules.push(exerciseSchedule_);
+				leagueFormService.sharedObject.schedules[exerciseSchedule_.schemaId] = exerciseSchedule_;
+		},
+		importSchedule: function (exerciseSchedule_) {
+			leagueFormService.sharedObject.schedules[exerciseSchedule_._id] = exerciseSchedule_;
+			console.log(leagueFormService.sharedObject.schedules);	
+		},
+		excludeImportedSchedule: function (exerciseSchedule_){
+			delete leagueFormService.sharedObject.schedules[exerciseSchedule_._id];
+		},
+		getScheduleIds: function () {
+			var ids = [];
+			for (id in leagueFormService.sharedObject.schedules)
+				ids.push(id);
+
+			console.log("getScheduleIds");
+			console.log(ids);
+			return ids;
 		}
 	};
 	return leagueFormService;

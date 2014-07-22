@@ -39,12 +39,14 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 
 	$scope.attachedSchema = {};
 	$scope.attachedSchema.open = false;
+	$scope.attachedSchema.schemas = [];
 	$scope.service = leagueFormService;
-	$scope.$watch('service.sharedObject.exerciseSchedule', function (newValue) {
+	$scope.$watch('service.sharedObject.schedules', function (newValue) {
 		console.log(newValue);
 		if(newValue != null){
-        	$scope.attachedSchema.name = newValue.name;
-        	$scope.attachedSchema.content = newValue.content;
+        	/*$scope.attachedSchema.name = newValue.name;
+        	$scope.attachedSchema.content = newValue.content;*/
+        	$scope.attachedSchema = newValue;
 		}
 
     });
@@ -66,7 +68,7 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 			else{
 
 				//Bind exerciseSchema to leagueData
-				$scope.leagueData.exerciseSchemaId = leagueFormService.getExercises().schemaId;
+				$scope.leagueData.exerciseSchemaId = leagueFormService.getScheduleIds();
 				$scope.leagueData.timeSpan = [$scope.date1.startDate.toJSON(), $scope.date1.endDate.toJSON()];
 				console.log($scope.date1);
 				console.log($scope.leagueData);
@@ -341,11 +343,11 @@ routerApp.controller('importSchemaController', function ($scope, $modal, $log, g
 
 	getExerciseService.getExercises().then(function (promise) {
 		$scope.exerciseSchemas = promise.data.ExerciseSchema;
-		$scope.isOpen = Array.apply(0, Array($scope.exerciseSchemas.length)).map(Boolean).map(Number); // init an array of booleans, used by accordion in gui
 		
 		$scope.exerciseSchemas.forEach(function(schema) {
 		    console.log(schema);
 		    schema.open = false;
+		    schema.checked = false;
 		});
 
 
@@ -380,15 +382,33 @@ routerApp.controller('importSchemaController', function ($scope, $modal, $log, g
 });
 
 //modal instance for import schema
-var ImportSchemaModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $http, exerciseSchemas)
+var ImportSchemaModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $http, exerciseSchemas, leagueFormService)
 {
 	$scope.exerciseSchemas = exerciseSchemas; // this is used in the importSchemaModalContent
 	$scope.ok = function () {
+		//append checked exercise schemas
+		angular.forEach($scope.exerciseSchemas, function(schema) {
+			if(schema.checked){
+			//	console.log("Checked schema");
+			//	console.log(schema);
+				leagueFormService.importSchedule(schema); // append the schema model
+			}
+			else
+				leagueFormService.excludeImportedSchedule(schema);
+
+		});
+
+
 		$modalInstance.close();
 	};
 	$scope.cancel = function () {
 		$modalInstance.dismiss('cancel');
 	};
+	$scope.checkboxClick = function(schema, $event){
+	 	$event.stopPropagation(); //Only want to trigger the checkbox
+	};
+
+	//function checkAlreadyImported(sch)	
 }
 
 

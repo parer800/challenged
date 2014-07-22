@@ -11,10 +11,10 @@ var leagueSchema = mongoose.Schema({
 		type		: mongoose.Schema.Types.ObjectId,
 		ref			: 'User'
 	},
-	exerciseSchema : {
-		type		: mongoose.Schema.Types.ObjectId,
-		ref			: 'Exercise'
-	}
+	exerciseSchema	: [{
+		type	: mongoose.Schema.Types.ObjectId,
+		ref		: 'Exercise'
+	}]
 });
 
 leagueSchema.methods.addLeague = function(res) {

@@ -20,15 +20,14 @@
             <td>Amount</td>
         </tr>
     </thead>
-    <tbody>
-    
-        <tr ng-repeat="task in selectedLeague[0].exerciseSchema.content">
-            <td>{{ task.name }}</td>
-            <td>{{ task.type }}</td>
-            <td>{{ task.subtype }}</td>
-            <td>{{ task.amount }}</td>
-        </tr>
-        
+    <tbody ng-repeat="schema in selectedLeague[0].exerciseSchema track by $index" id="{{schema.name+'-'+$index}}"> <!-- Can result in multiple <tbody> in the <table>, that's not a problem however.. -->
+            <tr ng-repeat="task in schema.content">
+                <td>{{ task.name }}</td>
+                <td>{{ task.type }}</td>
+                <td>{{ task.subtype }}</td>
+                <td>{{ task.amount }}</td>
+            </tr>
+
     </tbody>
 </table>
 

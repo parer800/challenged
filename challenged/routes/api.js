@@ -4,6 +4,7 @@ var League 	   = require('../model/league');
 var Exercise   = require('../model/exercise');
 
 
+var ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports = function(app, isLoggedIn) {
 	app.get('/api/users', isLoggedIn, function (req, res) {
@@ -30,19 +31,64 @@ module.exports = function(app, isLoggedIn) {
 	// =============================================================
 
 	app.post('/api/createLeague', isLoggedIn, function (req, res) {
+        console.log(req.body);
         var league = new League({name: req.body.name, creator: req.user});
+        var exerciseSchemaList = [];
         //If multiple schemas should be assigned upon creation this must be done in a loop
-		Exercise.findOne({_id: req.body.exerciseSchemaId}, function (err, exercise) {
-			if(err){
-				status_message = "An error occured with exercise schema";
-				console.log(err);
-				throw err;
-			}
-			var exerciseSchema_ = exercise;
-			var league = new League({name: req.body.name, creator: req.user, exerciseSchema: exerciseSchema_});
-			//league.exerciseSchemas.push({exerciseSchemaId : exercise});
-			league.addLeague(res);
-		});
+        /*req.body.exerciseSchemaId.forEach(function (id) {
+        	Exercise.findOne({_id: req.body.exerciseSchemaId}, function (err, exercise) {
+				if(err){
+					status_message = "An error occured with exercise schema";
+					console.log(err);
+					throw err;
+				}
+				var exerciseSchema_ = exercise;
+				
+				//league.exerciseSchemas.push({exerciseSchemaId : exercise});
+				league.exerciseSchema.push(exercise);
+			});
+
+
+        });*/
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!");
+        req.body.exerciseSchemaId.forEach(function (id) {
+        	exerciseSchemaList.push(ObjectId(id));
+        	league.exerciseSchema.push(ObjectId(id));
+        });
+        
+        console.log(exerciseSchemaList);
+        league.save(function(err, result) {
+					if (err){
+						res.status(400).send("error");
+					}
+					else{
+						console.log("success: " + JSON.stringify(this));
+						res.send({object : result});
+					}
+				});
+/*
+        league.update({
+        	$push: {exerciseSchema: { $each:  exerciseSchemaList}}},
+        	function(err, obj){
+				if(err)
+					console.log(err);
+				if(!obj)
+					console.log("cannot save");
+				league.save(function(err, result) {
+					if (err){
+						res.status(400).send("error");
+					}
+					else{
+						console.log("success: " + JSON.stringify(this));
+						res.send({object : result});
+					}
+				});
+			});
+
+*/
+		
+		
+		
 	});
 
 	app.get('/api/leagues', isLoggedIn, function (req, res) {
