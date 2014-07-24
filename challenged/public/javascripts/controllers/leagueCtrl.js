@@ -404,6 +404,7 @@ var ImportSchemaModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $
 //================================================================================================
 routerApp.controller('leagueController', function ($scope, $stateParams, $http, selectLeagueService) {
 	$scope.league = selectLeagueService.sharedObject.selectedLeague[0];
+	$scope.data = {};
 	console.log($scope.league);
 	// Page is probably refreshed, and we lost the selectedLeagueService
 	if(!$scope.league){
@@ -416,7 +417,7 @@ routerApp.controller('leagueController', function ($scope, $stateParams, $http, 
 
 
 	$scope.leagueName = $stateParams.specificLeague;
-	
+	$scope.data.league = $scope.league;	
 
 });
 

@@ -35,22 +35,6 @@ module.exports = function(app, isLoggedIn) {
         var league = new League({name: req.body.name, creator: req.user});
         var exerciseSchemaList = [];
         //If multiple schemas should be assigned upon creation this must be done in a loop
-        /*req.body.exerciseSchemaId.forEach(function (id) {
-        	Exercise.findOne({_id: req.body.exerciseSchemaId}, function (err, exercise) {
-				if(err){
-					status_message = "An error occured with exercise schema";
-					console.log(err);
-					throw err;
-				}
-				var exerciseSchema_ = exercise;
-				
-				//league.exerciseSchemas.push({exerciseSchemaId : exercise});
-				league.exerciseSchema.push(exercise);
-			});
-
-
-        });*/
-        console.log("!!!!!!!!!!!!!!!!!!!!!!!");
         req.body.exerciseSchemaId.forEach(function (id) {
         	exerciseSchemaList.push(ObjectId(id));
         	league.exerciseSchema.push(ObjectId(id));
@@ -58,37 +42,14 @@ module.exports = function(app, isLoggedIn) {
         
         console.log(exerciseSchemaList);
         league.save(function(err, result) {
-					if (err){
-						res.status(400).send("error");
-					}
-					else{
-						console.log("success: " + JSON.stringify(this));
-						res.send({object : result});
-					}
-				});
-/*
-        league.update({
-        	$push: {exerciseSchema: { $each:  exerciseSchemaList}}},
-        	function(err, obj){
-				if(err)
-					console.log(err);
-				if(!obj)
-					console.log("cannot save");
-				league.save(function(err, result) {
-					if (err){
-						res.status(400).send("error");
-					}
-					else{
-						console.log("success: " + JSON.stringify(this));
-						res.send({object : result});
-					}
-				});
-			});
-
-*/
-		
-		
-		
+			if (err){
+				res.status(400).send("error");
+			}
+			else{
+				console.log("success: " + JSON.stringify(this));
+				res.send({object : result});
+			}
+		});		
 	});
 
 	app.get('/api/leagues', isLoggedIn, function (req, res) {
@@ -106,6 +67,23 @@ module.exports = function(app, isLoggedIn) {
 
 	});
 
+
+	app.post('/api/league/confirmed', isLoggedIn, function (req, res) {
+		console.log("confirm task!!!");
+
+		League.findOne({_id: req.body.league._id}, function (err, league) {
+			if(err){
+				console.log(err);
+				throw err;
+			}
+			league.confirmedEvent(req, function () {
+				console.log("callback");
+				res.send;
+			});
+
+		});
+
+	});
 
 // =============================================================
 // EXERCISE SCHEMA =============================================

@@ -32,3 +32,28 @@ serviceApp.factory('getExerciseService', function($http) {
 		}
 	}
 });*/
+
+
+serviceApp.factory('confirmExerciseService', function ($http) {
+	return {
+		confirmTask: function (inputdata){
+			var promise = $http({
+				method	: 'POST',
+				url		: '/api/league/confirmed',
+				data 	: $.param(inputdata),
+				headers : {'Content-type': 'application/x-www-form-urlencoded'}
+				})
+				.success(function(data) {
+					console.log(data);
+				
+				}).
+				error(function(data, status, headers, config) {
+					console.log(data);
+					console.log(status);
+
+				});
+			return promise;		
+		}
+	}
+
+});

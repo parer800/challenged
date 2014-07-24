@@ -4,6 +4,15 @@ var Exercise   = require('./exercise');
 var mongoose = require('mongoose');
 
 
+var TimelineComponent = new mongoose.Schema({ date: 'Date',
+											  user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+											  task: [Exercise.content],
+											  details: 'Mixed'
+											}, {
+												  _id: false
+											});
+
+
 var leagueSchema = mongoose.Schema({
 	name			: String,
 	contenders		: [User],
@@ -14,7 +23,8 @@ var leagueSchema = mongoose.Schema({
 	exerciseSchema	: [{
 		type	: mongoose.Schema.Types.ObjectId,
 		ref		: 'Exercise'
-	}]
+	}],
+	timeline		: [TimelineComponent]
 });
 
 leagueSchema.methods.addLeague = function(res) {
@@ -32,6 +42,29 @@ leagueSchema.methods.addLeague = function(res) {
 	})
 	//Store data
 }
+
+leagueSchema.methods.confirmedEvent = function (req, callback) {
+	var inputdata = req.body;
+	var user = req.user;
+	console.log("confirmedEvent");
+	console.log(inputdata);
+	var timeline = {};
+	timeline.date = inputdata.date;
+	timeline.user = user;
+	timeline.task = inputdata.task;
+	this.timeline.push(timeline);
+	this.save(function (err, result) {
+		if (err){
+			console.log(err);
+			throw err;		
+		}
+		else
+			callback();
+	})
+	
+}
+
+
 leagueSchema.methods.addContenders = function(_contenderlist) {
 	leagueSchema.contenders.push(_contenderlist);
 }

@@ -27,6 +27,6 @@
 
 	<!-- COLUMN TWO NAMED VIEW ("specific league") -->
 	<div class="col-sm-6">
-		<div  ui-view="columnTwo"></div>
+		<div ng-show="selectedLeague[0].name" ui-view="columnTwo"></div> <!-- Only show this field if a league is selected, therefore if selectedLeague has a name -->
 	</div>
 </div>

@@ -1,7 +1,7 @@
 //league-directive.js
 
 //this is currently connected to the router app because it is dependent on ui.bootstrap.datetimepicker
-routerApp.directive('confirmPopover', function ($compile,$templateCache) {
+routerApp.directive('confirmPopover', function ($compile,$templateCache, confirmExerciseService) {
 return {
     restrict: "A",
     link: function (scope, element, attrs) {
@@ -13,7 +13,9 @@ return {
         popOverContent = $compile("<div>" + popOverContent+"</div>")(scope);
         scope.confirmTask=function(){
         	console.log("clicking");
-        	console.log(scope.task);
+        	scope.data.task = angular.toJson(scope.task);
+        	console.log(scope.data);
+        	confirmExerciseService.confirmTask(scope.data);
         }
         var options = {
             content: popOverContent,
