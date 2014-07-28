@@ -60,3 +60,37 @@ serviceApp.factory('leagueFormService', function () {
 	};
 	return leagueFormService;
 });
+
+serviceApp.factory('getTimelineService', function($http) {
+	var getTimelineService = {
+		sharedObject: {
+			timeline : null
+		},
+		getTimeline: function(inputdata) {
+			var promise = $http.get('/api/league/timeline/'+inputdata)
+				.success(function (result) {
+					console.log(result.timeline);
+					angular.forEach(result.timeline, function(key) {
+						console.log(typeof key.date);
+						key.date = new Date(Date.parse(key.date));
+						console.log(key.date.toString());
+					});
+					getTimelineService.sharedObject.timeline = result.timeline;					
+					return getTimelineService.sharedObject.timeline;
+				})
+				.error(function (err) {
+					return err;
+				});
+			return promise;
+		},
+		updateTimeline: function(newTimeline) {
+			angular.forEach(newTimeline, function(key) {
+				console.log(typeof key.date);
+				key.date = new Date(Date.parse(key.date));
+				console.log(key.date.toString());
+			});
+			getTimelineService.sharedObject.timeline = newTimeline;
+		}
+	};
+	return getTimelineService;
+});

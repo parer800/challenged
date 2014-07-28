@@ -32,13 +32,15 @@ module.exports = function(app, isLoggedIn) {
 
 	app.post('/api/createLeague', isLoggedIn, function (req, res) {
         console.log(req.body);
-        var league = new League({name: req.body.name, creator: req.user});
+        var league = new League({name: req.body.name, creator: req.user, duration: req.body.timeSpan});
         var exerciseSchemaList = [];
         //If multiple schemas should be assigned upon creation this must be done in a loop
         req.body.exerciseSchemaId.forEach(function (id) {
         	exerciseSchemaList.push(ObjectId(id));
         	league.exerciseSchema.push(ObjectId(id));
         });
+
+
         
         console.log(exerciseSchemaList);
         league.save(function(err, result) {
@@ -68,8 +70,39 @@ module.exports = function(app, isLoggedIn) {
 	});
 
 
+	app.get('/api/league/:id', isLoggedIn, function (req, res) {
+		console.log("GET LEAGUE INFO!!!!!!!!!!");
+		console.log(req.params.id);
+
+		League.findOne({_id: req.params.id})
+		.populate({
+			path: 'creator',
+			select: 'profile _id'
+		})
+		.populate('exerciseSchema')
+		.exec(function (err, result) {
+			if (err) throw err;
+
+			console.log(result);
+			res.json(result);
+			
+		});
+
+
+		/*
+		League.findOne({_id : req.params.id}, function (err, league) {
+			if(err)
+				throw err;
+
+			res.json(league);
+		});
+*/
+	});
+
+
 	app.post('/api/league/confirmed', isLoggedIn, function (req, res) {
 		console.log("confirm task!!!");
+		console.log(req.body);
 
 		League.findOne({_id: req.body.league._id}, function (err, league) {
 			if(err){
@@ -78,12 +111,29 @@ module.exports = function(app, isLoggedIn) {
 			}
 			league.confirmedEvent(req, function () {
 				console.log("callback");
-				res.send;
+				res.send({"timeline": league.timeline});
 			});
 
 		});
 
 	});
+
+	app.get('/api/league/timeline/:league_id', isLoggedIn, function (req, res) {
+		console.log("timeline");
+		console.log(req.query)
+		var league_id = req.params.league_id;
+
+		League.findOne({_id: league_id}, function (err, league) {
+			if(err) {
+				console.log(err);
+				throw err;
+			}
+			else{
+
+				res.json({'timeline': league.timeline});
+			}
+		});
+	})
 
 // =============================================================
 // EXERCISE SCHEMA =============================================

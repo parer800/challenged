@@ -34,7 +34,7 @@ serviceApp.factory('getExerciseService', function($http) {
 });*/
 
 
-serviceApp.factory('confirmExerciseService', function ($http) {
+serviceApp.factory('confirmExerciseService', function ($http, getTimelineService) {
 	return {
 		confirmTask: function (inputdata){
 			var promise = $http({
@@ -45,7 +45,7 @@ serviceApp.factory('confirmExerciseService', function ($http) {
 				})
 				.success(function(data) {
 					console.log(data);
-				
+					getTimelineService.updateTimeline(data.timeline);				
 				}).
 				error(function(data, status, headers, config) {
 					console.log(data);

@@ -30,7 +30,7 @@ routerApp.controller('listLeaguesController', function ($scope, listLeaguesServi
 
 });
 
-routerApp.controller('createLeagueController', function ($scope, $http, $filter, leagueFormService) {
+routerApp.controller('createLeagueController', function ($scope, $http, $filter, leagueFormService, leagueWeekService) {
 	$scope.leagueData = {};
 	$scope.date1;
 	$scope.schemaIsAttached;
@@ -67,10 +67,12 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 
 				//Bind exerciseSchema to leagueData
 				$scope.leagueData.exerciseSchemaId = leagueFormService.getScheduleIds();
-				$scope.leagueData.timeSpan = [$scope.date1.startDate.toJSON(), $scope.date1.endDate.toJSON()];
+				$scope.leagueData.timeSpan = [$scope.date1.startDate._d, $scope.date1.endDate._d];
+				console.log($scope.date1);
+				leagueWeekService.getWeek($scope.date1.startDate._d, $scope.date1.endDate._d);
 
 				//$scope.leagueData.name is set through create-league-form.html
-
+				/*
 				$http({
 					method	: 'POST',
 					url		: '/api/createLeague',
@@ -87,14 +89,14 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 					}
 					else{
 						$scope.message = data.message;
-					}*/
+					}
 				
 				}).
 				error(function(data, status, headers, config) {
 					console.log(data);
 					console.log(status);
 
-				});
+				});*/
 			}
 		}
 		else {
@@ -402,23 +404,68 @@ var ImportSchemaModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $
 //================================================================================================
 // League Controller for expanded information ====================================================
 //================================================================================================
-routerApp.controller('leagueController', function ($scope, $stateParams, $http, selectLeagueService) {
+routerApp.controller('leagueController', function ($scope, $stateParams, $http, selectLeagueService, getTimelineService) {
 	$scope.league = selectLeagueService.sharedObject.selectedLeague[0];
 	$scope.data = {};
+	$scope.timeline = null;
 	console.log($scope.league);
+
 	// Page is probably refreshed, and we lost the selectedLeagueService
 	if(!$scope.league){
+		console.log("if");
+		console.log($scope.league);
 		$http.get('/api/league/'+$stateParams.id).success(function (data) {
 			$scope.league = data;
+			$scope.data.league = $scope.league;	
 			console.log($scope.league);
+			getTimeline();
 		});	
 		
 	}
-
+	else{
+		getTimeline();
+	}
 
 	$scope.leagueName = $stateParams.specificLeague;
 	$scope.data.league = $scope.league;	
 
+	
+	function getTimeline() {
+		getTimelineService.getTimeline($scope.league._id).then(function (promise) {
+			$scope.timeline = promise.data.timeline;
+			console.log($scope.timeline);
+			$scope.$$phase || $scope.$apply();
+
+		});
+
+	}
+
+
+	//Timeline changed from other source
+	$scope.service = getTimelineService;
+	$scope.$watch('service.sharedObject.timeline', function (newValue) {
+		if(newValue != null){
+        	$scope.timeline = newValue;
+        	console.log("new TIMELINE EVENT");
+		}
+
+    })
+
+
+});
+
+routerApp.filter('toArray', function () {
+    'use strict';
+
+    return function (obj) {
+        if (!(obj instanceof Object)) {
+            return obj;
+        }
+
+        return Object.keys(obj).map(function (key) {
+            return Object.defineProperty(obj[key], '$key', {__proto__: null, value: key});
+        });
+    }
 });
 
 

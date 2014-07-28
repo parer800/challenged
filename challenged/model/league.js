@@ -5,8 +5,8 @@ var mongoose = require('mongoose');
 
 
 var TimelineComponent = new mongoose.Schema({ date: 'Date',
-											  user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-											  task: [Exercise.content],
+											  user: 'String',
+											  task: 'Mixed',
 											  details: 'Mixed'
 											}, {
 												  _id: false
@@ -16,6 +16,7 @@ var TimelineComponent = new mongoose.Schema({ date: 'Date',
 var leagueSchema = mongoose.Schema({
 	name			: String,
 	contenders		: [User],
+	duration		: ['Date'],
 	creator			: {
 		type		: mongoose.Schema.Types.ObjectId,
 		ref			: 'User'
@@ -45,12 +46,13 @@ leagueSchema.methods.addLeague = function(res) {
 
 leagueSchema.methods.confirmedEvent = function (req, callback) {
 	var inputdata = req.body;
-	var user = req.user;
+	var user = req.user.profile.name;
 	console.log("confirmedEvent");
-	console.log(inputdata);
+	console.log(inputdata.task);
 	var timeline = {};
 	timeline.date = inputdata.date;
 	timeline.user = user;
+	console.log(typeof inputdata.task);
 	timeline.task = inputdata.task;
 	this.timeline.push(timeline);
 	this.save(function (err, result) {

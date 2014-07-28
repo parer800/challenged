@@ -13,8 +13,9 @@ return {
         popOverContent = $compile("<div>" + popOverContent+"</div>")(scope);
         scope.confirmTask=function(){
         	console.log("clicking");
-        	scope.data.task = angular.toJson(scope.task);
-        	console.log(scope.data);
+        	var jsonString = angular.toJson(scope.task); // erase angular hashkey, will return a string
+        	scope.data.task = angular.fromJson(jsonString); // make jsonObject again
+        	console.log(scope.data.task);
         	confirmExerciseService.confirmTask(scope.data);
         }
         var options = {
@@ -28,6 +29,7 @@ return {
 	 scope.today = function() {
 	    scope.dt = new Date();
 	  };
+
 	 // scope.today();
 
 	  scope.clear = function () {
