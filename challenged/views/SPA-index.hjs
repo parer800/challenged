@@ -32,6 +32,7 @@
     <script src='/javascripts/services/user-services.js'></script>
     <script src='/javascripts/services/league-services.js'></script>
     <script src='/javascripts/services/exercise-services.js'></script>
+    <script src='/javascripts/services/alert-services.js'></script>
 
     <!-- directives -->
     <script src='/javascripts/directives/customDirectives.js'></script>
@@ -80,6 +81,7 @@
       </ul>
       <!-- Navbar top end -->
 
+
        <!-- Navbar side begin -->
       <div class="navbar-default navbar-static-side" role="navigation">
         <div class="sidebar-collapse">
@@ -88,10 +90,10 @@
                   <div class="input-group custom-search-form">
                       <input type="text" class="form-control" placeholder="Search...">
                       <span class="input-group-btn">
-                      <button class="btn btn-default" type="button">
-                          <i class="fa fa-search"></i>
-                      </button>
-                  </span>
+                        <button class="btn btn-default" type="button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                      </span>
                   </div>
                   <!-- /input-group -->
               </li>
@@ -102,6 +104,9 @@
                 <a ui-sref="leagues"><i class="fa fa-table fa-fw"></i> Leagues</a>
               </li>
             </ul>
+            <div id="notifications_middlescreen">
+              <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="alert.close()">{{ alert.msg }}</alert>
+            </div>
           </div>
       </div>
     </nav>

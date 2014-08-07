@@ -33,8 +33,7 @@ serviceApp.factory('getExerciseService', function($http) {
 	}
 });*/
 
-
-serviceApp.factory('confirmExerciseService', function ($http, getTimelineService) {
+serviceApp.factory('confirmExerciseService', function ($http, getTimelineService, alertService) {
 	return {
 		confirmTask: function (inputdata){
 			var promise = $http({
@@ -45,14 +44,28 @@ serviceApp.factory('confirmExerciseService', function ($http, getTimelineService
 				})
 				.success(function(data) {
 					console.log(data);
-					getTimelineService.updateTimeline(data.timeline);				
+					getTimelineService.updateTimeline(data.timeline);
+					alertService.add("success", data.statusMessage);				
 				}).
 				error(function(data, status, headers, config) {
 					console.log(data);
 					console.log(status);
+					alertService.add("error", data);
 
 				});
 			return promise;		
+		},
+		weeklyConfirmed : function (inputdata) {
+
+			var promise = $http.get('/api/league/confirmedevents/'+inputdata.league_id+'/'+inputdata.league_week)
+			.success(function (result) {
+					console.log(result);
+					return result
+				})
+			.error(function (err) {
+					return err;
+				});
+			return promise;
 		}
 	}
 

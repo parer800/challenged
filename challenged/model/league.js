@@ -15,7 +15,10 @@ var TimelineComponent = new mongoose.Schema({ date: 'Date',
 
 var leagueSchema = mongoose.Schema({
 	name			: String,
-	contenders		: [User],
+	contenders		: [{
+		type	: mongoose.Schema.Types.ObjectId,
+		ref		: 'User'
+	}],
 	duration		: ['Date'],
 	creator			: {
 		type		: mongoose.Schema.Types.ObjectId,
@@ -27,6 +30,7 @@ var leagueSchema = mongoose.Schema({
 	}],
 	timeline		: [TimelineComponent]
 });
+
 
 leagueSchema.methods.addLeague = function(res) {
 	//var league = new LeagueSchema(name: _name, creator : _creator );
@@ -42,6 +46,39 @@ leagueSchema.methods.addLeague = function(res) {
 		}
 	})
 	//Store data
+}
+
+leagueSchema.methods.addLeagueReferenceToUser = function (user, callback) {
+	console.log("!!! addLeagueReferenceToUser");
+	console.log(this._id);
+	console.log(user);
+	this.model('User').findByIdAndUpdate(user, 
+		{$push: {league : this._id}, upsert:true},
+		function(err, obj){
+			if(err)
+				console.log(err);
+			if(!obj)
+				console.log("cannot save");
+			
+			//result message
+
+			var status_message = "User has been added to league"; 
+			callback(status_message);
+			
+		}					  
+	);
+
+	/*this.model('User').findOne({_id: user}, function (err, user) {
+		user.league.push(this._id);
+		user.save(function (err) {
+			if (err)
+				throw err;
+
+			var status_message = "User has been added to league"; 
+			callback(status_message);
+		});
+
+	});*/
 }
 
 leagueSchema.methods.confirmedEvent = function (req, callback) {
@@ -60,8 +97,11 @@ leagueSchema.methods.confirmedEvent = function (req, callback) {
 			console.log(err);
 			throw err;		
 		}
-		else
-			callback();
+		else{
+			req.user.addLeagueTimelineEvent(this, inputdata, function(){
+				callback();
+			});			
+		}
 	})
 	
 }

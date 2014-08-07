@@ -7,6 +7,20 @@ var Exercise   = require('../model/exercise');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports = function(app, isLoggedIn) {
+	
+	// =============================================================
+	// USER/USERS ==================================================
+	// =============================================================	
+
+
+	app.get('/api/user', isLoggedIn, function (req, res) {
+
+		var map = {};
+		map._id = req.user._id;
+		map.profile = req.user.profile;
+		res.send(map);
+	});
+
 	app.get('/api/users', isLoggedIn, function (req, res) {
 		// Async db call
 		User.find({}, function (err, users) {
@@ -14,15 +28,13 @@ module.exports = function(app, isLoggedIn) {
 			var user_data = [];
 			users.forEach(function (user) {
 				userMap[user._id] = user;
-				user_data.push(user.profile);
+				user_data.push({profile: user.profile, _id: user._id});
 			});
 			if(err)
 				throw err;
-			console.log(user_data);
 			res.json(user_data);
 		});
 	});
-
 
 
 
@@ -31,7 +43,7 @@ module.exports = function(app, isLoggedIn) {
 	// =============================================================
 
 	app.post('/api/createLeague', isLoggedIn, function (req, res) {
-        console.log(req.body);
+
         var league = new League({name: req.body.name, creator: req.user, duration: req.body.timeSpan});
         var exerciseSchemaList = [];
         //If multiple schemas should be assigned upon creation this must be done in a loop
@@ -40,19 +52,40 @@ module.exports = function(app, isLoggedIn) {
         	league.exerciseSchema.push(ObjectId(id));
         });
 
+        //result message
+		var status_message;
 
-        
-        console.log(exerciseSchemaList);
         league.save(function(err, result) {
 			if (err){
-				res.status(400).send("error");
+				status_message = "Some error occurred while trying to save";
+				res.status(400).send({"statusMessage":status_message});
 			}
 			else{
 				console.log("success: " + JSON.stringify(this));
-				res.send({object : result});
+					//add league reference to user
+				league.addLeagueReferenceToUser(req.user._id, function (message) {
+					res.send({object : result, "statusMessage":message});
+				});
 			}
 		});		
 	});
+
+	app.get('/api/user/leagues', isLoggedIn, function (req, res) {
+		//Select leagues created by the user
+		User.findOne({_id: req.user._id})
+		.select("league")
+		.populate('league')
+		.populate('exerciseSchema')
+		.exec(function (err, result) {
+			if (err) throw err;
+
+
+			res.send(result.league);
+		});
+
+	});
+
+
 
 	app.get('/api/leagues', isLoggedIn, function (req, res) {
 		//Select leagues created by the user
@@ -102,20 +135,24 @@ module.exports = function(app, isLoggedIn) {
 
 	app.post('/api/league/confirmed', isLoggedIn, function (req, res) {
 		console.log("confirm task!!!");
-		console.log(req.body);
 
+		//result message
+		var status_message;
+		
 		League.findOne({_id: req.body.league._id}, function (err, league) {
 			if(err){
 				console.log(err);
+				status_message = "Error while trying to confirm: " + req.body.task.name;
+				res.send({"timeline": league.timeline, "statusMessage": status_message});
 				throw err;
 			}
 			league.confirmedEvent(req, function () {
 				console.log("callback");
-				res.send({"timeline": league.timeline});
+				status_message = req.body.task.name + " has been confirmed"
+				res.send({"timeline": league.timeline, "statusMessage": status_message});
 			});
 
 		});
-
 	});
 
 	app.get('/api/league/timeline/:league_id', isLoggedIn, function (req, res) {
@@ -133,12 +170,83 @@ module.exports = function(app, isLoggedIn) {
 				res.json({'timeline': league.timeline});
 			}
 		});
-	})
+	});
+
+	app.get('/api/league/confirmedevents/:league_id/:league_week', isLoggedIn, function (req, res) {
+		var league_id = req.params.league_id;
+		var league_week = +req.params.league_week;
+		var user = req.user;
+/*
+		User.find({_id: req.user._id}, {"timeline":{$elemMatch:{league_id: league_id}}}, function (err, events) {
+			console.log(events);
+			res.send(events);
+		});*/
+
+		var query = User.find({_id: req.user._id});
+		query.where('timeline.league_id').equals(league_id);
+		query.select("timeline");
+		var map = {};
+		var ids = [];
+		map.events = [];
+		query.exec(function (err, documents) {
+			documents[0].timeline.forEach(function (item) {
+				if(item.league_id == league_id){
+					var key = item.events[0].league_week;
+					if(key == league_week){
+						ids.push(item.events[0].event._id);
+						map.events.push(item.events[0].event);
+					}
+				}
+				
+			});
+			res.send(ids);
+		})
+		/*User.find({_id: req.user._id}, {"timeline.league_id":league_id, "timeline":{$elemMatch:{league_id: league_id}}}, function (err, events) {
+			console.log(events);
+			res.send(events);
+		})*/
+
+	});
+
+	app.post('/api/league/contender', isLoggedIn, function (req, res) {
+		console.log("confirm task!!!");
+		console.log(req.body);
+
+		//result message
+		var status_message;
+		
+		League.findOne({_id: req.body.league._id}, function (err, league) {
+			if(err){
+				console.log(err);
+				status_message = "Error while trying to confirm: " + req.body.task.name;
+				res.send({"timeline": league.timeline, "statusMessage": status_message});
+				throw err;
+			}
+			league.contenders.push(req.body.contender._id);
+	        league.save(function(err, result) {
+				if (err){
+					status_message = "couldn't add contender";
+					res.status(400).send({"statusMessage":status_message});
+				}
+				else{
+					console.log("success: " + JSON.stringify(this));
+
+
+					//add league reference to user
+					league.addLeagueReferenceToUser(req.body.contender._id, function (message) {
+						res.send({object : result, "statusMessage":message});
+					});					
+
+				}
+			});	
+
+		});
+	});
+
 
 // =============================================================
 // EXERCISE SCHEMA =============================================
 // =============================================================
-	
 	app.get('/api/exerciseSchemas', isLoggedIn, function (req, res) {
 		console.log("INSIDE EXERCISE SCHEMAS");
 		User.findOne({_id: req._passport.session.user})
@@ -154,7 +262,6 @@ module.exports = function(app, isLoggedIn) {
 
 	app.post('/api/createSchema', isLoggedIn, function (req, res) {
 		//console.log(req.body);
-		console.log(req.body);
 		
 		//var exercise = new Exercise;
 
@@ -188,7 +295,8 @@ module.exports = function(app, isLoggedIn) {
 								
 
 								//result message
-								res.send({object : result});
+								var status_message = 'Exercise schema "' + req.body.name + '" was successfully saved!'; 
+								res.send({object : result, statusMessage: status_message});
 							}					  
 	     				);
 					});
@@ -206,8 +314,6 @@ module.exports = function(app, isLoggedIn) {
 				exercise = exercise_;
 				for(var i = exercise_.content.length; i < req.body.content.length; i++){
 					var item = req.body.content[i];
-					console.log("updating position i= " + i + " With item :");
-					console.log(item);
 					exercise.content.push({name: item.name, type: item.type, subtype: item.subtype, amount: item.amount});
 				}
 

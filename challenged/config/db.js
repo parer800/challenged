@@ -33,4 +33,6 @@ process.on('SIGINT', function() {
 	});
 });
 
+//mongoose.set('debug', true);
+
 //LOAD SCHEMAS & MODELS

@@ -1,11 +1,10 @@
 //league-directive.js
 
 //this is currently connected to the router app because it is dependent on ui.bootstrap.datetimepicker
-routerApp.directive('confirmPopover', function ($compile,$templateCache, confirmExerciseService) {
+routerApp.directive('confirmPopover', function ($compile,$templateCache, confirmExerciseService, leagueWeekService) {
 return {
     restrict: "A",
     link: function (scope, element, attrs) {
-
 
         var popOverContent;
         popOverContent = $templateCache.get("weeklyTaskList.html");     
@@ -15,7 +14,12 @@ return {
         	console.log("clicking");
         	var jsonString = angular.toJson(scope.task); // erase angular hashkey, will return a string
         	scope.data.task = angular.fromJson(jsonString); // make jsonObject again
-        	console.log(scope.data.task);
+        	console.log(scope.league);
+        	var startDate = new Date(scope.league.duration[0]);
+        	var date = scope.data.date;
+        	var leagueWeekNr = leagueWeekService.getWeek(startDate, date);
+        	scope.data.league_week = leagueWeekNr;
+        	console.log(scope);
         	confirmExerciseService.confirmTask(scope.data);
         }
         var options = {
@@ -42,7 +46,7 @@ return {
 	  };
 
 	  scope.toggleMin = function() {
-	    scope.minDate = scope.minDate ? null : new Date();
+	    scope.minDate = scope.minDate ? null : new Date(scope.league.duration[0]);
 	  };
 	  scope.toggleMin();
 
@@ -50,9 +54,10 @@ return {
 	  	console.log("scope.task");
 	    $event.preventDefault();
 	    $event.stopPropagation();
-
 	    scope.opened = true;
 	  };
+
+	  
 
 	  scope.dateOptions = {
 	    formatYear: 'yy',

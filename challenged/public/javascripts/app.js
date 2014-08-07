@@ -102,6 +102,12 @@ routerApp.config(function($stateProvider, $urlRouterProvider, $locationProvider)
 			controller 	  : 'friendController'
 		});
 })
+.run(function($rootScope) {
+    $rootScope.alerts = [];
+    $rootScope.test = "TEST";
+}); 
 	var serviceApp = angular.module('serviceApp', []); // keep services connected to this object
 	var directiveApp = angular.module('directiveApp', []) // keep dircetives connected to this object
 	var mainApp = angular.module('mainApp', ['routerApp', 'serviceApp', 'directiveApp']); // tha main app connected on the outer html element
+
+	

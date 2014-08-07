@@ -30,7 +30,7 @@ routerApp.controller('listLeaguesController', function ($scope, listLeaguesServi
 
 });
 
-routerApp.controller('createLeagueController', function ($scope, $http, $filter, leagueFormService, leagueWeekService) {
+routerApp.controller('createLeagueController', function ($scope, $http, $filter, leagueFormService, leagueWeekService, alertService) {
 	$scope.leagueData = {};
 	$scope.date1;
 	$scope.schemaIsAttached;
@@ -61,6 +61,7 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 			//Check whether an exercise schema has been added
 			console.log(leagueFormService.getScheduleIds());
 			if(leagueFormService.getScheduleIds() == 0){
+				alertService.add("warning", "An exercise schema must be attached!");
 				$scope.schemaIsAttached = false;
 			}
 			else{
@@ -72,7 +73,7 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 				leagueWeekService.getWeek($scope.date1.startDate._d, $scope.date1.endDate._d);
 
 				//$scope.leagueData.name is set through create-league-form.html
-				/*
+				
 				$http({
 					method	: 'POST',
 					url		: '/api/createLeague',
@@ -82,6 +83,7 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 				.success(function(data) {
 					$scope.$$phase || $scope.$apply();
 
+					alertService.add("success", data.statusMessage);
 					// Ugly temporary solution, a better way with separate controllers is to share a service
 					angular.element(document.getElementById('user-league-list')).scope().updateLeagueList();
 					/*if(!data.success) {
@@ -90,13 +92,14 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 					else{
 						$scope.message = data.message;
 					}
-				
+				*/
 				}).
 				error(function(data, status, headers, config) {
 					console.log(data);
 					console.log(status);
+					alertService.add("error", data.statusMessage);
 
-				});*/
+				});
 			}
 		}
 		else {
@@ -229,7 +232,7 @@ routerApp.controller('taskController', function ($scope, $modal, $log) {
 });
 
 //modal instance for create schema
-var CreateSchemaModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $http, exercises, statuses, newSchema, subtypes, leagueFormService) {
+var CreateSchemaModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $http, exercises, statuses, newSchema, subtypes, leagueFormService, alertService) {
 	$scope.statuses = statuses;
 	$scope.exercises = exercises;
 	$scope.subtypes = subtypes;
@@ -302,12 +305,13 @@ var CreateSchemaModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $
 		}).success(function (data, status) {
 			console.log(data);
 					// Add everything to outer Object since everything was succesfully stored, add notificattions etc..
-
+					alertService.add("success", data.statusMessage);
 					$scope.newSchema.schemaId = data.object._id; // set id of newly created schema, we are going to pass this instead of the schema objects since it is already stored in database...
 					leagueFormService.updateObject($scope.newSchema);
 		
 		}).
 		error(function(data, status, headers, config) {
+			alertService.add("danger", data);
 			console.log(data);
 			console.log(status);
 		});
@@ -404,40 +408,100 @@ var ImportSchemaModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $
 //================================================================================================
 // League Controller for expanded information ====================================================
 //================================================================================================
-routerApp.controller('leagueController', function ($scope, $stateParams, $http, selectLeagueService, getTimelineService) {
+routerApp.controller('leagueController', function ($scope, $stateParams, $http, selectLeagueService, getTimelineService, confirmExerciseService,leagueWeekService, listUserService, userService, alertService) {
 	$scope.league = selectLeagueService.sharedObject.selectedLeague[0];
 	$scope.data = {};
 	$scope.timeline = null;
-	console.log($scope.league);
+	$scope.currentLeagueWeek =null;
+	$scope.alreadyConfirmed = [];
+	$scope.users = [];
+	$scope.user = null;
+	$scope.userToAdd = undefined;
 
+	listUserService.getUsers().then(function (result){
+		$scope.users = result.data;
+		console.log($scope.users);
+	});
+	userService.getUser().then(function (result) {
+		$scope.user = result.data;
+		console.log($scope.user);
+	});
+
+	$scope.leagueName = $stateParams.specificLeague;
+	$scope.data.league = $scope.league;
 	// Page is probably refreshed, and we lost the selectedLeagueService
 	if(!$scope.league){
-		console.log("if");
-		console.log($scope.league);
 		$http.get('/api/league/'+$stateParams.id).success(function (data) {
 			$scope.league = data;
 			$scope.data.league = $scope.league;	
-			console.log($scope.league);
 			getTimeline();
+			getWeeklyConfirmation();
 		});	
 		
 	}
 	else{
 		getTimeline();
+		getWeeklyConfirmation();
 	}
 
-	$scope.leagueName = $stateParams.specificLeague;
-	$scope.data.league = $scope.league;	
+	$scope.taskClass = function (id) {
+		var ending = "info"
+		var cssClass = "bs-callout bs-callout-"+ending;
+		
+		return cssClass;
+	}
+	
+	$scope.creatorPermission = function() {
+		if($scope.user == null || $scope.data.league == undefined)
+			return false;
+		if($scope.user._id == $scope.data.league.creator._id)
+			return true;
+
+		return false;
+	}
 
 	
+	function getWeeklyConfirmation(){
+		var input ={};
+		input.league_id = $scope.data.league._id;
+		$scope.currentLeagueWeek = leagueWeekService.getWeek($scope.league.duration[0], new Date());
+		input.league_week = $scope.currentLeagueWeek;
+		confirmExerciseService.weeklyConfirmed(input).then(function (promise) {
+			$scope.alreadyConfirmed = promise.data
+		})
+	}
+
+
 	function getTimeline() {
 		getTimelineService.getTimeline($scope.league._id).then(function (promise) {
 			$scope.timeline = promise.data.timeline;
-			console.log($scope.timeline);
 			$scope.$$phase || $scope.$apply();
 
 		});
 
+	}
+
+	$scope.addContender = function(contender) {
+		console.log("adding contender", contender);
+
+		var inputdata = {}
+		inputdata.contender = contender;
+		inputdata.league = $scope.data.league;
+
+		$http({
+				method	: 'POST',
+				url		: '/api/league/contender',
+				data 	: $.param(inputdata),
+				headers : {'Content-type': 'application/x-www-form-urlencoded'}
+				})
+				.success(function(data) {
+					console.log(data);
+					alertService.add("success", data.statusMessage);				
+				}).
+				error(function(data, status, headers, config) {
+					alertService.add("error", data);
+
+				});
 	}
 
 
@@ -446,7 +510,6 @@ routerApp.controller('leagueController', function ($scope, $stateParams, $http, 
 	$scope.$watch('service.sharedObject.timeline', function (newValue) {
 		if(newValue != null){
         	$scope.timeline = newValue;
-        	console.log("new TIMELINE EVENT");
 		}
 
     })
@@ -454,6 +517,10 @@ routerApp.controller('leagueController', function ($scope, $stateParams, $http, 
 
 });
 
+
+
+
+// Filter used to make possible to sort timeline object by datetime..
 routerApp.filter('toArray', function () {
     'use strict';
 

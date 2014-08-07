@@ -6,7 +6,7 @@
 	<div class="col-md-12">
 		<!-- task is defined in ng-reapeat -->
 		<!-- <p class="input-group">
-			<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+			<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
 			<span class="input-group-btn">
                 <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
             </span>
@@ -18,7 +18,7 @@
 		    </div>
 		  </a>
 		  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-		    <datetimepicker data-ng-model="data.date" data-datetimepicker-config="{ dropdownSelector: '#dropdown2' }"/>
+		    <datetimepicker min-date="minDate" max="'2015-06-22'" data-ng-model="data.date" data-datetimepicker-config="{ dropdownSelector: '#dropdown2' }"/>
 		  </ul>
 		</div>
 		<button class="btn btn-success" ng-click="confirmTask()">confirm task</button>
@@ -26,15 +26,36 @@
 </div>
 </script>
 
+
+
 <h1>{{league.name}}</h1>
+
+<div class="row" ng-show="creatorPermission()">
+	<div class="col-md-6 add-contender">
+		<div class="input-group">
+	 		<input type="text" class="form-control" ng-model="userToAdd" typeahead="user as user.profile.name + ' - ' + user.profile.email for user in users | filter:$viewValue | limitTo:8" class="form-control">
+	      <span class="input-group-btn">
+	        <button ng-show="userToAdd.profile.email" ng-click="addContender(userToAdd)" class="btn btn-default" type="button">
+	            <i class="fa fa-plus"></i>
+	            <i class="fa fa-user"></i>
+	        </button>
+	        <span class="btn btn-default" ng-hide="userToAdd.profile.email">
+	            <i class="fa fa-search-plus"></i>
+	            <i class="fa fa-user"></i>
+	        </span>
+	      </span>
+      </div> 		
+ 	</div>
+</div>
+{{userToAdd}}
+
 <div class="row">
 	<div class="col-md-6 weekly-tasks-list">
-		<h4>Weekly tasks</h4>
+		<h4>Weekly tasks for league week {{currentLeagueWeek}}</h4>
 		 <div ng-repeat="schema in league.exerciseSchema">
 		 	<div ng-repeat="task in schema.content">
-
-			 	<div class="bs-callout bs-callout-info">
-				 	<div class="confirm-task-btn pull-right"> <button class="btn btn-default" confirm-popover data-placement="right" data-title="Confirm"><i class="fa fa-check"></i></button></div>
+			 	<div class="bs-callout" ng-class="{'bs-callout-info': alreadyConfirmed.indexOf(task._id) == -1}">
+				 	<div ng-show="alreadyConfirmed.indexOf(task._id) == -1" class="confirm-task-btn pull-right"> <button class="btn btn-default" confirm-popover data-placement="right" data-title="Confirm"><i class="fa fa-check"></i></button></div>
 				 		<div class="callout-content">
 					 		<h4>{{task.name}}</h4>
 
@@ -48,14 +69,14 @@
 	</div>
 
 	
-	<div id = "league-weekly-timeline" class="panel panel-default col-md-6 pull-right">
+	<div id = "league-weekly-timeline" class="panel panel-default col-md-6">
 	    <div class="panel-heading">
 	        <i class="fa fa-clock-o fa-fw"></i> Weekly Timeline
 	    </div>
 	    <!-- /.panel-heading -->
 	    <div class="panel-body">
 	        <ul class="timeline">
-				<li ng-repeat="event in timeline | toArray | orderBy:'date'" ng-class-even="'timeline-inverted'">
+				<li ng-repeat="event in timeline | toArray | orderBy:'date':true" ng-class-even="'timeline-inverted'">
 				 <!-- this uses a filter to turn the object into an array before sorting -->
 				    <div class="timeline-badge"><i class="fa fa-check"></i>
 				    </div>
@@ -75,8 +96,8 @@
 				
 	        </ul>
 	    </div>
-	 </div>
-	</div>
- 
+	 </div> 
 
  </div> <!--End of row-->
+
+
