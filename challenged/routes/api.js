@@ -44,27 +44,32 @@ module.exports = function(app, isLoggedIn) {
 
 	app.post('/api/createLeague', isLoggedIn, function (req, res) {
 
-        var league = new League({name: req.body.name, creator: req.user, duration: req.body.timeSpan});
+        var league = new League({name: req.body.name, duration: req.body.timeSpan});
         var exerciseSchemaList = [];
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        console.log(req.user);
+        league.creator.push({profile: req.user.profile, _id: ObjectId(req.user._id)});
         //If multiple schemas should be assigned upon creation this must be done in a loop
-        req.body.exerciseSchemaId.forEach(function (id) {
-        	exerciseSchemaList.push(ObjectId(id));
-        	league.exerciseSchema.push(ObjectId(id));
+        req.body.exerciseSchema.forEach(function (schema) {
+        		console.log(schema);
+        		league.exerciseSchema.push({content:schema.content, name:schema.name, creator: ObjectId(schema.creator)});
         });
-
         //result message
 		var status_message;
 
         league.save(function(err, result) {
 			if (err){
+				console.log(err);
 				status_message = "Some error occurred while trying to save";
-				res.status(400).send({"statusMessage":status_message});
+				res.status(400).send(status_message);
 			}
 			else{
 				console.log("success: " + JSON.stringify(this));
 					//add league reference to user
+
 				league.addLeagueReferenceToUser(req.user._id, function (message) {
-					res.send({object : result, "statusMessage":message});
+					status_message = "League " + league.name + " was succesfully created";
+					res.send({object : result, "statusMessage":status_message});
 				});
 			}
 		});		
@@ -75,12 +80,18 @@ module.exports = function(app, isLoggedIn) {
 		User.findOne({_id: req.user._id})
 		.select("league")
 		.populate('league')
-		.populate('exerciseSchema')
 		.exec(function (err, result) {
 			if (err) throw err;
 
-
+			/*User.findOne({_id:result.creator.creator_id}, function (err, user) {
+				
+				console.log("##############################################################################");
+				console.log(result);
+				result.league.creator = user.profile;
+				res.send(result.league);
+			});*/
 			res.send(result.league);
+
 		});
 
 	});
@@ -89,14 +100,13 @@ module.exports = function(app, isLoggedIn) {
 
 	app.get('/api/leagues', isLoggedIn, function (req, res) {
 		//Select leagues created by the user
-		League.find({creator: req._passport.session.user})
+		League.find({"creator._id": req._passport.session.user})
 		.populate({
-			path: 'creator',
+			path: 'creator._id',
 			select: 'profile _id'
 		})
-		.populate('exerciseSchema')
 		.exec(function (err, result) {
-			if (err) return handleError(err);
+			if (err) throw(err);
 			res.send(result);	
 		});
 
@@ -189,16 +199,20 @@ module.exports = function(app, isLoggedIn) {
 		var ids = [];
 		map.events = [];
 		query.exec(function (err, documents) {
-			documents[0].timeline.forEach(function (item) {
-				if(item.league_id == league_id){
-					var key = item.events[0].league_week;
-					if(key == league_week){
-						ids.push(item.events[0].event._id);
-						map.events.push(item.events[0].event);
+			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!###############!!!!!!!!!!!!!!!!!!");
+			console.log(documents);
+			if(documents.length > 0){
+				documents[0].timeline.forEach(function (item) {
+					if(item.league_id == league_id){
+						var key = item.events[0].league_week;
+						if(key == league_week){
+							ids.push(item.events[0].event._id);
+							map.events.push(item.events[0].event);
+						}
 					}
-				}
-				
-			});
+					
+				});
+			}
 			res.send(ids);
 		})
 		/*User.find({_id: req.user._id}, {"timeline.league_id":league_id, "timeline":{$elemMatch:{league_id: league_id}}}, function (err, events) {

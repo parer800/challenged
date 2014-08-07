@@ -3,7 +3,7 @@
 serviceApp.factory('listLeaguesService', function($http) {
 	return {
 		getLeagues: function() {
-			var promise = $http.get('/api/leagues')
+			var promise = $http.get('/api/user/leagues')
 				.success(function (result) {					
 					return result;
 				})
@@ -53,8 +53,11 @@ serviceApp.factory('leagueFormService', function () {
 		},
 		getScheduleIds: function () {
 			var ids = [];
-			for (id in leagueFormService.sharedObject.schedules)
-				ids.push(id);
+			for (id in leagueFormService.sharedObject.schedules){
+				ids.push(angular.fromJson(angular.toJson(leagueFormService.sharedObject.schedules[id])));
+				
+				console.log(angular.fromJson(angular.toJson(leagueFormService.sharedObject.schedules[id])));
+			}
 
 			return ids;
 		}

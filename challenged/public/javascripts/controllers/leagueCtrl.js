@@ -67,7 +67,7 @@ routerApp.controller('createLeagueController', function ($scope, $http, $filter,
 			else{
 
 				//Bind exerciseSchema to leagueData
-				$scope.leagueData.exerciseSchemaId = leagueFormService.getScheduleIds();
+				$scope.leagueData.exerciseSchema = leagueFormService.getScheduleIds();
 				$scope.leagueData.timeSpan = [$scope.date1.startDate._d, $scope.date1.endDate._d];
 				console.log($scope.date1);
 				leagueWeekService.getWeek($scope.date1.startDate._d, $scope.date1.endDate._d);
@@ -454,7 +454,7 @@ routerApp.controller('leagueController', function ($scope, $stateParams, $http, 
 	$scope.creatorPermission = function() {
 		if($scope.user == null || $scope.data.league == undefined)
 			return false;
-		if($scope.user._id == $scope.data.league.creator._id)
+		if($scope.user._id == $scope.data.league.creator[0]._id)
 			return true;
 
 		return false;

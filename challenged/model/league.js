@@ -12,6 +12,15 @@ var TimelineComponent = new mongoose.Schema({ date: 'Date',
 												  _id: false
 											});
 
+var UserComponent = new mongoose.Schema({ profile: 'Mixed',
+										  _id: {
+											type		: mongoose.Schema.Types.ObjectId,
+											ref			: 'User'
+										  } //will be users '_id'
+										},
+										{
+											_id: false
+										});
 
 var leagueSchema = mongoose.Schema({
 	name			: String,
@@ -20,14 +29,8 @@ var leagueSchema = mongoose.Schema({
 		ref		: 'User'
 	}],
 	duration		: ['Date'],
-	creator			: {
-		type		: mongoose.Schema.Types.ObjectId,
-		ref			: 'User'
-	},
-	exerciseSchema	: [{
-		type	: mongoose.Schema.Types.ObjectId,
-		ref		: 'Exercise'
-	}],
+	creator			: [UserComponent],
+	exerciseSchema	: ['Exercise'],
 	timeline		: [TimelineComponent]
 });
 
