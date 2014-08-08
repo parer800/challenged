@@ -35,7 +35,7 @@ serviceApp.factory('getExerciseService', function($http) {
 
 serviceApp.factory('confirmExerciseService', function ($http, getTimelineService, alertService) {
 	return {
-		confirmTask: function (inputdata){
+		confirmTask: function (inputdata, callback){
 			var promise = $http({
 				method	: 'POST',
 				url		: '/api/league/confirmed',
@@ -45,7 +45,8 @@ serviceApp.factory('confirmExerciseService', function ($http, getTimelineService
 				.success(function(data) {
 					console.log(data);
 					getTimelineService.updateTimeline(data.timeline);
-					alertService.add("success", data.statusMessage);				
+					alertService.add("success", data.statusMessage);
+					if(callback) callback();				
 				}).
 				error(function(data, status, headers, config) {
 					console.log(data);

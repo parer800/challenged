@@ -20,7 +20,9 @@ return {
         	var leagueWeekNr = leagueWeekService.getWeek(startDate, date);
         	scope.data.league_week = leagueWeekNr;
         	console.log(scope);
-        	confirmExerciseService.confirmTask(scope.data);
+        	confirmExerciseService.confirmTask(scope.data, function () {
+        		scope.alreadyConfirmed.push(scope.data.task._id);
+        	});
         }
         var options = {
             content: popOverContent,
