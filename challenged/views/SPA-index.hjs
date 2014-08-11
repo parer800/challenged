@@ -65,6 +65,20 @@
 
       <!-- Logined user indicator -->
       <ul id="settings-nav" class="nav navbar-top-links navbar-right">
+        <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <i class="fa fa-bell fa-fw"></i>  <i class="fa fa-caret-down"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-alerts">
+                  <li ng-repeat="message in incoming track by $index | orderBy:'date'">
+                      <a href="#">
+                          <incoming-message message="message"></incoming-message>
+                      </a>                  
+                  </li>
+                  <li class="divider"></li>
+              </ul>
+              <!-- /.dropdown-alerts -->
+        </li>
         <li><a ui-sref="home">Home</a></li>
         <li><a ui-sref="profile">Profile</a></li>
         <li class="dropdown">
@@ -125,3 +139,7 @@
   <script src='/javascripts/sb-admin/plugins/metisMenu/jquery.metisMenu.js'></script>
   <script src='/javascripts/sb-admin/sb-admin.js'></script>
 </html>
+
+
+
+

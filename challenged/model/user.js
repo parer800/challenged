@@ -62,7 +62,8 @@ var userSchema = mongoose.Schema({
 	league 			: [{
 		type	: mongoose.Schema.Types.ObjectId,
 		ref		: 'League'
-	}]	
+	}],
+	incoming		: ['Mixed'] // incoming invitations, friend request etc..
 });
 
 

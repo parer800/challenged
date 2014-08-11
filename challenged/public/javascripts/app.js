@@ -102,9 +102,34 @@ routerApp.config(function($stateProvider, $urlRouterProvider, $locationProvider)
 			controller 	  : 'friendController'
 		});
 })
-.run(function($rootScope) {
+.run(function($rootScope, incomingService) {
     $rootScope.alerts = [];
     $rootScope.test = "TEST";
+    $rootScope.incoming = [];
+    
+    //A way to look for new incoming messages on every route changed
+    $rootScope.$on('$stateChangeSuccess', function () {
+        incomingService.getIncoming();
+        console.log("rootscope");
+        console.log($rootScope.incoming);
+    })   
+
+})
+.factory('incomingService', function($rootScope, $http) {
+	return{
+	    getIncoming : function () {
+	        var promise = $http.get('/api/user/incoming')
+	            .success(function (result) {
+	                console.log(result)
+	                $rootScope.incoming = result;
+	                return result;
+	            })
+	            .error(function (err) {
+	                return err;
+	            });
+	        return promise.data;
+	    }		
+	}
 }); 
 	var serviceApp = angular.module('serviceApp', []); // keep services connected to this object
 	var directiveApp = angular.module('directiveApp', []) // keep dircetives connected to this object

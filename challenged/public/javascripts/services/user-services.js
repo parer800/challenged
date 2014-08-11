@@ -61,3 +61,29 @@ serviceApp.factory('leagueWeekService', function () {
 		}
 	}
 });
+
+
+serviceApp.factory('confirmMessageService', function ($http, getTimelineService, alertService) {
+	return {
+		confirmInvetation: function (inputdata, callback){
+			var promise = $http({
+				method	: 'POST',
+				url		: '/api/user/incoming',
+				data 	: $.param(inputdata),
+				headers : {'Content-type': 'application/x-www-form-urlencoded'}
+				})
+				.success(function(data) {
+					console.log(data);
+					alertService.add("success", data.statusMessage);
+					if(callback) callback();				
+				}).
+				error(function(data, status, headers, config) {
+					console.log(data);
+					console.log(status);
+					alertService.add("error", data);
+
+				});
+			return promise;		
+		}
+	}
+});

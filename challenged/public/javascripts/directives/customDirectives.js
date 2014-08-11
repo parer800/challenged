@@ -1,5 +1,5 @@
 //customDirectives.js
-
+/*
 directiveApp.directive('schemasCollapse', function () {
 	return {
 		restrict: 'A',
@@ -31,4 +31,43 @@ directiveApp.directive('schemasCollapse', function () {
         }
 	};
 
+});*/
+
+directiveApp.directive('incomingMessage', function ($compile, confirmMessageService) {
+ // <span class="text-muted small">{{message.date}}</span> (a time notation)
+  var buttonGroup = '<button type="button" ng-click="confirmMessage($parent.$index)" class="btn btn-info btn-xs pull-right"><i class="fa fa-check"></i></button>'
+  var leagueTemplate = '<div><i class="fa fa-trophy fa-fw"></i>Inbjuden till {{message.league.name}}'+buttonGroup+'</div>';
+  var friendTemplate = '<div><i class="fa fa-user fa-fw"></i> {{message.from}}<span class="pull-right text-muted small">{{message.date}}</span></div>'
+  var linker = function (scope, element, attrs) {
+    element.html(getTemplate(scope.message.type)).show();
+    scope.confirmMessage = function (message_index) {
+      console.log("confirmMessage");
+      console.log(scope.message);
+      console.log(message_index);
+      var inputData = {index: message_index};
+      confirmMessageService.confirmInvetation(inputData);
+    }
+    $compile(element.contents())(scope);
+  }
+
+  var getTemplate = function (messageType) {
+    var template = '';
+    switch(messageType){
+      case 'league':
+        template = leagueTemplate;
+        break;
+      case 'friend':
+        template = friendTemplate;
+        break;
+    }
+    return template;
+  }
+  return {
+    restrict: "E",
+    replace: true,
+    link : linker,
+    scope: {
+      message:'='
+    }
+  };
 });

@@ -28,6 +28,10 @@ var leagueSchema = mongoose.Schema({
 		type	: mongoose.Schema.Types.ObjectId,
 		ref		: 'User'
 	}],
+	invitations 	: [{
+		type	: mongoose.Schema.Types.ObjectId,
+		ref		: 'User'
+	}],
 	duration		: ['Date'],
 	creator			: [UserComponent],
 	exerciseSchema	: ['Exercise'],
@@ -51,10 +55,27 @@ leagueSchema.methods.addLeague = function(res) {
 	//Store data
 }
 
+leagueSchema.methods.addLeagueInvetationToUser = function (invitaion_component, callback) {
+	this.model('User').findByIdAndUpdate(invitaion_component.to, 
+		{$push: {incoming : invitaion_component}, upsert:true},
+		function(err, obj){
+			if(err)
+				console.log(err);
+			if(!obj)
+				console.log("cannot save");
+			
+			//result message
+
+			var status_message = "User has been invited to league"; 
+			callback(status_message);
+			
+		}					  
+	);
+}
+
 leagueSchema.methods.addLeagueReferenceToUser = function (user, callback) {
 	console.log("!!! addLeagueReferenceToUser");
 	console.log(this._id);
-	console.log(user);
 	this.model('User').findByIdAndUpdate(user, 
 		{$push: {league : this._id}, upsert:true},
 		function(err, obj){
@@ -65,23 +86,11 @@ leagueSchema.methods.addLeagueReferenceToUser = function (user, callback) {
 			
 			//result message
 
-			var status_message = "User has been added to league"; 
+			var status_message = "User has been invited to league"; 
 			callback(status_message);
 			
 		}					  
 	);
-
-	/*this.model('User').findOne({_id: user}, function (err, user) {
-		user.league.push(this._id);
-		user.save(function (err) {
-			if (err)
-				throw err;
-
-			var status_message = "User has been added to league"; 
-			callback(status_message);
-		});
-
-	});*/
 }
 
 leagueSchema.methods.confirmedEvent = function (req, callback) {

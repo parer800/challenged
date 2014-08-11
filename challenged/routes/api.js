@@ -36,6 +36,37 @@ module.exports = function(app, isLoggedIn) {
 		});
 	});
 
+	app.get('/api/user/incoming', isLoggedIn, function (req, res) {
+		res.send(req.user.incoming);
+	});
+
+	app.post('/api/user/incoming', isLoggedIn, function (req, res) {
+		
+		var arrayIndex = req.body.index;
+		var key = "incoming."+arrayIndex;
+		console.log(key);
+		
+
+		User.findOne({_id:req.user._id}, function (err, user) {
+			if(err) throw err;
+
+			var  element = user.incoming.splice(arrayIndex,1)[0];
+			user.save(function (err) {
+				if (err) throw err;
+
+				League.findOne({_id:element.league.id}, function (err, league) {
+					if (err) throw err;
+
+					league.addLeagueReferenceToUser(user, function () {
+						res.send({statusMessage:"Invetation has been accepted"});
+					});
+				});
+				
+			});
+		})
+
+	})
+
 
 
 	// =============================================================
@@ -65,8 +96,7 @@ module.exports = function(app, isLoggedIn) {
 			}
 			else{
 				console.log("success: " + JSON.stringify(this));
-					//add league reference to user
-
+				//add league reference to user
 				league.addLeagueReferenceToUser(req.user._id, function (message) {
 					status_message = "League " + league.name + " was succesfully created";
 					res.send({object : result, "statusMessage":status_message});
@@ -83,6 +113,8 @@ module.exports = function(app, isLoggedIn) {
 		.exec(function (err, result) {
 			if (err) throw err;
 
+			console.log("!!!!!!!!!!!!!!!!!!! USER LEAGUES !!!!!!!!!!!!!!!!!!!!!");
+			console.log(result);
 			/*User.findOne({_id:result.creator.creator_id}, function (err, user) {
 				
 				console.log("##############################################################################");
@@ -223,7 +255,7 @@ module.exports = function(app, isLoggedIn) {
 	});
 
 	app.post('/api/league/contender', isLoggedIn, function (req, res) {
-		console.log("confirm task!!!");
+		//Invite another user to the league
 		console.log(req.body);
 
 		//result message
@@ -232,11 +264,12 @@ module.exports = function(app, isLoggedIn) {
 		League.findOne({_id: req.body.league._id}, function (err, league) {
 			if(err){
 				console.log(err);
-				status_message = "Error while trying to confirm: " + req.body.task.name;
+				status_message = "Error while trying to add user: ";
 				res.send({"timeline": league.timeline, "statusMessage": status_message});
 				throw err;
 			}
-			league.contenders.push(req.body.contender._id);
+			var invitaion_component = {from:req.user.profile.name, to: req.body.contender._id, league:{id:league._id, name:league.name}, date:new Date().getTime(), type:"league"};
+			league.invitations.push(invitaion_component.to);
 	        league.save(function(err, result) {
 				if (err){
 					status_message = "couldn't add contender";
@@ -247,7 +280,7 @@ module.exports = function(app, isLoggedIn) {
 
 
 					//add league reference to user
-					league.addLeagueReferenceToUser(req.body.contender._id, function (message) {
+					league.addLeagueInvetationToUser(invitaion_component, function (message) {
 						res.send({object : result, "statusMessage":message});
 					});					
 
