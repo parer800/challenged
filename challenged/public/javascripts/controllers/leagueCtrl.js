@@ -292,10 +292,6 @@ var CreateSchemaModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $
 
 	$scope.ok = function () {
 		$scope.newSchema.name = $scope.schedule.schemaName;
-		console.log("TRYING TO SAVE");
-		console.log($scope.newSchema.schemaId);
-		console.log($scope.newSchema);
-		console.log(leagueFormService.sharedObject.exerciseSchedule);
 		//save schema on server
 		$http({
 			method	: 'POST',
@@ -303,11 +299,11 @@ var CreateSchemaModalInstanceCtrl = function ($scope ,$modalInstance, $filter, $
 			data 	: $.param($scope.newSchema),
 			headers : {'Content-type': 'application/x-www-form-urlencoded'}
 		}).success(function (data, status) {
-			console.log(data);
-					// Add everything to outer Object since everything was succesfully stored, add notificattions etc..
-					alertService.add("success", data.statusMessage);
-					$scope.newSchema.schemaId = data.object._id; // set id of newly created schema, we are going to pass this instead of the schema objects since it is already stored in database...
-					leagueFormService.updateObject($scope.newSchema);
+			// Add everything to outer Object since everything was succesfully stored, add notificattions etc..
+			alertService.add("success", data.statusMessage);
+			$scope.newSchema.content = data.object.content; // we need server saved content since we are dependent on a mongoDB created '_id'.
+			$scope.newSchema.schemaId = data.object._id; // set id of newly created schema, we are going to pass this instead of the schema objects since it is already stored in database...
+			leagueFormService.updateObject($scope.newSchema);
 		
 		}).
 		error(function(data, status, headers, config) {
@@ -467,6 +463,8 @@ routerApp.controller('leagueController', function ($scope, $stateParams, $http, 
 		$scope.currentLeagueWeek = leagueWeekService.getWeek($scope.league.duration[0], new Date());
 		input.league_week = $scope.currentLeagueWeek;
 		confirmExerciseService.weeklyConfirmed(input).then(function (promise) {
+			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			console.log(promise.data);
 			$scope.alreadyConfirmed = promise.data
 		})
 	}

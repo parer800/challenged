@@ -78,7 +78,7 @@ module.exports = function(app, isLoggedIn) {
         var league = new League({name: req.body.name, duration: req.body.timeSpan});
         var exerciseSchemaList = [];
         console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        console.log(req.user);
+        console.log(req.body);
         league.creator.push({profile: req.user.profile, _id: ObjectId(req.user._id)});
         //If multiple schemas should be assigned upon creation this must be done in a loop
         req.body.exerciseSchema.forEach(function (schema) {
@@ -154,9 +154,11 @@ module.exports = function(app, isLoggedIn) {
 			path: 'creator',
 			select: 'profile _id'
 		})
-		.populate('exerciseSchema')
 		.exec(function (err, result) {
-			if (err) throw err;
+			if (err) {
+				console.log(err);
+				throw err;
+			}
 
 			console.log(result);
 			res.json(result);

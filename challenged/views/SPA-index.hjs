@@ -115,7 +115,7 @@
                 <a href="#"><i class="fa fa-users fa-fw"></i> Friends</a>
               </li>
               <li>
-                <a ui-sref="leagues"><i class="fa fa-table fa-fw"></i> Leagues</a>
+                <a ui-sref="leagues"><i class="fa fa-trophy fa-fw"></i> Leagues</a>
               </li>
             </ul>
             <div id="notifications_middlescreen">

@@ -41,7 +41,7 @@ serviceApp.factory('leagueFormService', function () {
 				return leagueFormService.sharedObject.exerciseSchedule;
 		},
 		updateObject: function (exerciseSchedule_) {
-
+				console.log(exerciseSchedule_);
 				leagueFormService.sharedObject.exerciseSchedule = exerciseSchedule_;
 				leagueFormService.sharedObject.schedules[exerciseSchedule_.schemaId] = exerciseSchedule_;
 		},
@@ -55,8 +55,7 @@ serviceApp.factory('leagueFormService', function () {
 			var ids = [];
 			for (id in leagueFormService.sharedObject.schedules){
 				ids.push(angular.fromJson(angular.toJson(leagueFormService.sharedObject.schedules[id])));
-				
-				console.log(angular.fromJson(angular.toJson(leagueFormService.sharedObject.schedules[id])));
+
 			}
 
 			return ids;
