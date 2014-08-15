@@ -9,17 +9,17 @@ var TimelineComponent = new mongoose.Schema({ date: 'Date',
 											  task: 'Mixed',
 											  details: 'Mixed'
 											}, {
-												  _id: false
+												  _id: false // no need to geneterate _id column for this document.
 											});
 
 var UserComponent = new mongoose.Schema({ profile: 'Mixed',
 										  _id: {
 											type		: mongoose.Schema.Types.ObjectId,
 											ref			: 'User'
-										  } //will be users '_id'
+										  }
 										},
 										{
-											_id: false
+											_id: false // no need to geneterate _id column for this document.
 										});
 
 var leagueSchema = mongoose.Schema({
