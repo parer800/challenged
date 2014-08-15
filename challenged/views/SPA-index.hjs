@@ -70,7 +70,7 @@
                   <i class="fa fa-bell fa-fw"></i>  <i class="fa fa-caret-down"></i>
               </a>
               <ul class="dropdown-menu dropdown-alerts">
-                  <li ng-repeat="message in incoming track by $index | orderBy:'date'">
+                  <li ng-repeat="message in incoming track by $index">
                       <a href="#">
                           <incoming-message message="message"></incoming-message>
                       </a>                  
